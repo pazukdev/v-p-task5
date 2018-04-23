@@ -12,13 +12,13 @@ import com.vaadin.ui.themes.ValoTheme;
 import java.time.LocalDate;
 
 
-public class hotelEditForm extends FormLayout {
+public class HotelEditForm extends FormLayout {
 
     private TextField name = new TextField("Name");
     private TextField address = new TextField("Address");
     private TextField rating = new TextField("Rating");
     private DateField operatesFrom = new DateField("Date");
-    private NativeSelect<HotelCategory> category = new NativeSelect<>("Category");
+    private NativeSelect<Category> category = new NativeSelect<>("Category");
     private TextArea description = new TextArea("Description");
     private TextField url = new TextField("URL");
 
@@ -27,12 +27,13 @@ public class hotelEditForm extends FormLayout {
     private Button save = new Button("Save");
     private Button close = new Button("Close");
 
-    private HotelService service = HotelService.getInstance();
+    private HotelService hotelService = HotelService.getInstance();
+    private CategoryService categoryService = CategoryService.getInstance();
     private Hotel hotel;
     private MyUI myUI;
     private Binder<Hotel> binder = new Binder<>(Hotel.class);
 
-    public hotelEditForm(MyUI myUI) {
+    public HotelEditForm(MyUI myUI) {
         this.myUI = myUI;
 
         name.setValueChangeMode(ValueChangeMode.EAGER);
@@ -44,7 +45,7 @@ public class hotelEditForm extends FormLayout {
         rating.setValueChangeMode(ValueChangeMode.EAGER);
         rating.setDescription("Hotel star rating. Numbers: 0, 1, 2, 3, 4, 5");
 
-        category.setItems(HotelCategory.values());
+        category.setItems(categoryService.findAll());
         category.setWidth("186px");
         category.setDescription("Hotel category");
 
@@ -118,6 +119,9 @@ public class hotelEditForm extends FormLayout {
     }
 
     public void editHotel(Hotel hotel) {
+
+        category.setItems(categoryService.findAll());
+
         this.hotel=hotel;
         binder.readBean(hotel);
 
@@ -136,8 +140,8 @@ public class hotelEditForm extends FormLayout {
     }
 
     private void delete() {
-        service.delete(hotel);
-        myUI.updateList();
+        hotelService.delete(hotel);
+        myUI.updateHotelList();
         setVisible(false);
     }
 
@@ -147,8 +151,8 @@ public class hotelEditForm extends FormLayout {
         } catch (ValidationException e) {
             e.printStackTrace();
         }
-        service.save(hotel);
-        myUI.updateList();
+        hotelService.save(hotel);
+        myUI.updateHotelList();
         setVisible(false);
     }
 

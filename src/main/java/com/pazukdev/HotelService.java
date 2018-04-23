@@ -18,8 +18,7 @@ public class HotelService {
 	private final HashMap<Long, Hotel> hotels = new HashMap<>();
 	private long nextId = 0;
 
-	private HotelService() {
-	}
+	private HotelService() {}
 
 	public static HotelService getInstance() {
 		if (instance == null) {
@@ -72,6 +71,10 @@ public class HotelService {
                     case "by address":
                         passesFilterWithFilterOption=hotel.getAddress().toLowerCase().contains(stringFilter.toLowerCase());
                         break;
+                    case "by category":
+                        passesFilterWithFilterOption=hotel.getCategory().toString().equals(stringFilter);
+                        break;
+
                 }
 
                 if (passesFilter || passesFilterWithFilterOption) {
@@ -81,6 +84,7 @@ public class HotelService {
                 Logger.getLogger(HotelService.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+
         Collections.sort(arrayList, new Comparator<Hotel>() {
 
             @Override
@@ -118,7 +122,7 @@ public class HotelService {
 		return arrayList.subList(start, end);
 	}
 
-	public synchronized long count() {
+	public synchronized Integer count() {
 		return hotels.size();
 	}
 
@@ -154,6 +158,7 @@ public class HotelService {
     }
 
 	public void ensureTestData() {
+		List<Category> categoriesList = CategoryService.getInstance().findAll();
 		if (findAll().isEmpty()) {
 			final String[] hotelData = new String[] {
 					"3 Nagas Luang Prabang - MGallery by Sofitel;4;https://www.booking.com/hotel/la/3-nagas-luang-prabang-by-accor.en-gb.html;Vat Nong Village, Sakkaline Road, Democratic Republic Lao, 06000 Luang Prabang, Laos;",
@@ -186,14 +191,12 @@ public class HotelService {
 				Hotel h = new Hotel();
 				h.setName(split[0]);
 				h.setRating(Integer.parseInt(split[1]));
-                //h.setRating(split[1]);
 				h.setUrl(split[2]);
 				h.setAddress(split[3]);
-				h.setCategory(HotelCategory.values()[r.nextInt(HotelCategory.values().length)]);
-				//long daysOld = r.nextInt(365 * 30);
-                int daysOld = 0-r.nextInt(365 * 30);
-				h.setOperatesFrom((LocalDate.now().plusDays(daysOld)));
-				//h.setOperatesFrom(LocalDate.now().minusDays(daysOld).toEpochDay());
+				//h.setCategory(HotelCategory.values()[r.nextInt(HotelCategory.values().length)]);
+				h.setCategory(categoriesList.get(r.nextInt(categoriesList.size())));
+				long daysOld = r.nextInt(365 * 30);
+				h.setOperatesFrom(LocalDate.now().minusDays(daysOld));
 				h.setDescription(getHotelDescription());
 				save(h);
 			}

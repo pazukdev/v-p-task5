@@ -10,19 +10,18 @@ public class Hotel implements Serializable, Cloneable {
 	private String name;
 	private String address;
 	private Integer rating;
-	//private Long operatesFrom;
-	private LocalDate operatesFrom;
-	private HotelCategory category;
+	private Long operatesFrom;
+	private Category category;
 	private String url="http://";
 	private String description;
 
-	public boolean isPersisted() {
+	/*public boolean isPersisted() {
 		return id != null;
-	}
+	}*/
 
 	@Override
 	public String toString() {
-		return name + " " + rating +"stars " + address;
+		return name + " hotel. Address: " + address + ". Rating: " + rating + " stars";
 	}
 
 	@Override
@@ -53,9 +52,13 @@ public class Hotel implements Serializable, Cloneable {
         return hash;
 	}
 
-	public Hotel() {}
+    public Hotel() {}
 
-    public Hotel(Long id, String name, String address, Integer rating, LocalDate operatesFrom, HotelCategory category,
+	public Hotel(LocalDate yesterday) {
+	    this.operatesFrom = yesterday.toEpochDay();
+    }
+
+    public Hotel(Long id, String name, String address, Integer rating, Long operatesFrom, Category category,
                  String url, String description) {
         super();
         this.id = id;
@@ -97,18 +100,21 @@ public class Hotel implements Serializable, Cloneable {
 		this.rating = rating;
 	}
 
+
 	public LocalDate getOperatesFrom() {
-		return operatesFrom;
-	}
-	public void setOperatesFrom(LocalDate operatesFrom) {
-		this.operatesFrom = operatesFrom;
+		return LocalDate.ofEpochDay(this.operatesFrom);
 	}
 
-	public HotelCategory getCategory() {
+    public void setOperatesFrom(LocalDate date) {
+        this.operatesFrom = date.toEpochDay();
+    }
+
+	public Category getCategory() {
 		return category;
 	}
-	public void setCategory(HotelCategory category) {
-		this.category = category;
+	public void setCategory(Category category) {
+	    if(category!=null) this.category = category;
+	    else this.category=null;
 	}	
 
 	public String getUrl() {
