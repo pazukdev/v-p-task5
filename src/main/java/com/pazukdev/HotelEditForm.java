@@ -10,6 +10,8 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class HotelEditForm extends FormLayout {
@@ -18,7 +20,7 @@ public class HotelEditForm extends FormLayout {
     private TextField address = new TextField("Address");
     private TextField rating = new TextField("Rating");
     private DateField operatesFrom = new DateField("Date");
-    private NativeSelect<Category> category = new NativeSelect<>("Category");
+    private NativeSelect<Integer> category = new NativeSelect<>("HotelCategory");
     private TextArea description = new TextArea("Description");
     private TextField url = new TextField("URL");
 
@@ -30,11 +32,11 @@ public class HotelEditForm extends FormLayout {
     private HotelService hotelService = HotelService.getInstance();
     private CategoryService categoryService = CategoryService.getInstance();
     private Hotel hotel;
-    private MyUI myUI;
+    private HotelForm hotelForm;
     private Binder<Hotel> binder = new Binder<>(Hotel.class);
 
-    public HotelEditForm(MyUI myUI) {
-        this.myUI = myUI;
+    public HotelEditForm(HotelForm hotelForm) {
+        this.hotelForm = hotelForm;
 
         name.setValueChangeMode(ValueChangeMode.EAGER);
         name.setDescription("Hotel name");
@@ -45,9 +47,14 @@ public class HotelEditForm extends FormLayout {
         rating.setValueChangeMode(ValueChangeMode.EAGER);
         rating.setDescription("Hotel star rating. Numbers: 0, 1, 2, 3, 4, 5");
 
-        category.setItems(categoryService.findAll());
         category.setWidth("186px");
         category.setDescription("Hotel category");
+        List<Integer> categories = new ArrayList<>();
+        for (HotelCategory category : CategoryService.getInstance().findAll()) {
+            categories.add(category.getId());
+        }
+        category.setItemCaptionGenerator(i -> categoryService.findById(i).getName());
+        category.setItems(categories);
 
         operatesFrom.setDescription("Hotel operates since");
         operatesFrom.setRangeEnd(LocalDate.now().minusDays(1L));
@@ -84,7 +91,7 @@ public class HotelEditForm extends FormLayout {
 
         binder.forField(category)
                 .asRequired("The field shouldn't be empty")
-                .bind(Hotel:: getCategory, Hotel:: setCategory);
+                .bind(Hotel:: getCategoryID, Hotel:: setCategoryID);
 
         String urlRegex = "^http(s{0,1})://[a-zA-Z0-9_/\\-\\.]+\\.([A-Za-z/]{2,5})[a-zA-Z0-9_/\\&\\?\\=\\-\\.\\~\\%]*";
         //String urlRegex = "^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
@@ -120,7 +127,7 @@ public class HotelEditForm extends FormLayout {
 
     public void editHotel(Hotel hotel) {
 
-        category.setItems(categoryService.findAll());
+        /*category.setItems(categoryService.findAll());
 
         this.hotel=hotel;
         binder.readBean(hotel);
@@ -132,7 +139,22 @@ public class HotelEditForm extends FormLayout {
         });
 
         setVisible(true);
+        name.selectAll();*/
+
+        this.hotel = hotel;
+        binder.readBean(hotel);
+        if (CategoryService.getInstance().findById(hotel.getCategoryID()) == null) {
+            category.setSelectedItem(null);
+        }
+        binder.addStatusChangeListener(event -> {
+            boolean isValid = event.getBinder().isValid();
+            boolean hasChanges = event.getBinder().hasChanges();
+            save.setEnabled(hasChanges && isValid);
+        });
+        //delete.setVisible(hotel.isPersisted());
+        setVisible(true);
         name.selectAll();
+
     }
 
     private void close() {
@@ -141,19 +163,34 @@ public class HotelEditForm extends FormLayout {
 
     private void delete() {
         hotelService.delete(hotel);
-        myUI.updateHotelList();
+        hotelForm.updateHotelList();
         setVisible(false);
     }
 
     private void save() {
-        try {
+        /*try {
             binder.writeBean(hotel);
         } catch (ValidationException e) {
             e.printStackTrace();
         }
         hotelService.save(hotel);
-        myUI.updateHotelList();
-        setVisible(false);
+        hotelForm.updateHotelList();
+        setVisible(false);*/
+
+        if (binder.isValid()) {
+            try {
+                binder.writeBean(hotel);
+            } catch (ValidationException e) {
+                e.printStackTrace();
+            }
+            hotelService.save(hotel);
+            hotelForm.updateHotelList();
+            //hotelForm.swapComponentsVisibility();
+            setVisible(false);
+        } else {
+            binder.validate();
+        }
+
     }
 
 

@@ -7,8 +7,6 @@ import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
-import java.util.List;
-
 
 public class CategoryEditForm extends FormLayout {
 
@@ -19,22 +17,25 @@ public class CategoryEditForm extends FormLayout {
 
     private CategoryService categoryService = CategoryService.getInstance();
     private HotelService hotelService = HotelService.getInstance();
-    private Category category;
-    private MyUI myUI;
-    private Binder<Category> binder = new Binder<>(Category.class);
+    private HotelCategory category;
+
+    private CategoryForm categoryForm;
+    HotelForm hotelForm = new HotelForm();
+
+    private Binder<HotelCategory> binder = new Binder<>(HotelCategory.class);
 
     private String categoryOldName;
 
-    public CategoryEditForm(MyUI myUI) {
-        this.myUI = myUI;
+    public CategoryEditForm(CategoryForm categoryForm) {
+        this.categoryForm=categoryForm;
 
         name.setValueChangeMode(ValueChangeMode.EAGER);
-        name.setDescription("Category name");
+        name.setDescription("HotelCategory name");
 
         binder.forField(name)
                 .asRequired("The field shouldn't be empty")
                 .withNullRepresentation("")
-                .bind(Category:: getName, Category:: setName);
+                .bind(HotelCategory:: getName, HotelCategory:: setName);
 
         binder.bindInstanceFields(this);
 
@@ -60,8 +61,8 @@ public class CategoryEditForm extends FormLayout {
 
     }
 
-    public void editCategory(Category category) {
-        this.category=category;
+    public void editCategory(HotelCategory category) {
+        /*this.category=category;
         categoryOldName=category.toString();
         binder.readBean(category);
         binder.addStatusChangeListener(event -> {
@@ -71,25 +72,39 @@ public class CategoryEditForm extends FormLayout {
         });
 
         setVisible(true);
+        name.selectAll();*/
+
+        this.category = category;
+        //binder.setBean(category);
+        binder.readBean(category);
+        binder.addStatusChangeListener(event -> {
+            boolean isValid = event.getBinder().isValid();
+            boolean hasChanges = event.getBinder().hasChanges();
+            save.setEnabled(hasChanges && isValid);
+        });
+        setVisible(true);
         name.selectAll();
+
     }
 
     private void close() {
         setVisible(false);
     }
 
-    private void delete() {
+    /*private void delete() {
         categoryService.delete(category);
-        myUI.updateCategoryList();
+        categoryForm.updateCategoryList();
         setVisible(false);
-    }
+    }*/
 
     private void save() {
 
-        List<Hotel> hotelsList = hotelService.findAll(categoryOldName, "by category");
-        for(Hotel hotel : hotelsList) {
-            hotel.setCategory(category);
-            hotelService.save(hotel);
+        /*if(categoryOldName!=null) {
+            List<Hotel> hotelsList = hotelService.findAllByCategory(categoryOldName);
+            for(Hotel hotel : hotelsList) {
+                hotel.setCategory(category.toString());
+                hotelService.save(hotel);
+            }
         }
 
         try {
@@ -98,9 +113,24 @@ public class CategoryEditForm extends FormLayout {
             e.printStackTrace();
         }
         categoryService.save(category);
-        myUI.updateCategoryList();
-        myUI.updateHotelList();
-        setVisible(false);
+        categoryForm.updateCategoryList();
+        hotelForm.updateHotelList();
+        setVisible(false);*/
+
+        if (binder.isValid()) {
+            try {
+                binder.writeBean(category);
+            } catch (ValidationException e) {
+                e.printStackTrace();
+            }
+            categoryService.save(category);
+            categoryForm.updateCategoryList();
+
+            setVisible(false);
+        } else {
+            binder.validate();
+        }
+
     }
 
 

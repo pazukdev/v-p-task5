@@ -1,23 +1,50 @@
 package com.pazukdev;
 
+
+
+import com.vaadin.spring.annotation.SpringComponent;
+import com.vaadin.spring.annotation.VaadinSessionScope;
+
+import javax.persistence.*;
+import javax.xml.bind.annotation.XmlIDREF;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+
 @SuppressWarnings("serial")
+@Entity
+@Table(name="HOTEL")
 public class Hotel implements Serializable, Cloneable {
 
+	@Id
+	@Column(name = "ID")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+    @Column(name="NAME")
 	private String name;
+
+    @Column(name="ADDRESS")
 	private String address;
+
+	@Column(name="RATING")
 	private Integer rating;
+
+	@Column(name="OPERATES_FROM")
 	private Long operatesFrom;
-	private Category category;
+
+	@Column(name="CATEGORY")
+	private Integer categoryID;
+
+	@Column(name="URL")
 	private String url="http://";
+
+	@Column(name = "DESCRIPTION", columnDefinition = "text")
 	private String description;
 
-	/*public boolean isPersisted() {
+	public boolean isPersisted() {
 		return id != null;
-	}*/
+	}
 
 	@Override
 	public String toString() {
@@ -58,7 +85,7 @@ public class Hotel implements Serializable, Cloneable {
 	    this.operatesFrom = yesterday.toEpochDay();
     }
 
-    public Hotel(Long id, String name, String address, Integer rating, Long operatesFrom, Category category,
+    public Hotel(Long id, String name, String address, Integer rating, Long operatesFrom, Integer categoryID,
                  String url, String description) {
         super();
         this.id = id;
@@ -66,7 +93,7 @@ public class Hotel implements Serializable, Cloneable {
         this.address = address;
         this.rating = rating;
         this.operatesFrom = operatesFrom;
-        this.category = category;
+        this.categoryID = categoryID;
         this.url = url;
         this.description=description;
     }
@@ -109,12 +136,11 @@ public class Hotel implements Serializable, Cloneable {
         this.operatesFrom = date.toEpochDay();
     }
 
-	public Category getCategory() {
-		return category;
+	public Integer getCategoryID() {
+		return categoryID;
 	}
-	public void setCategory(Category category) {
-	    if(category!=null) this.category = category;
-	    else this.category=null;
+	public void setCategoryID(Integer categoryID) {
+	    this.categoryID = categoryID;
 	}	
 
 	public String getUrl() {

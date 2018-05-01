@@ -15,8 +15,10 @@ public class HotelService {
 	private static HotelService instance;
 	private static final Logger LOGGER = Logger.getLogger(HotelService.class.getName());
 
+	//DAOHotel daoHotel = new DAOHotel();
+
 	private final HashMap<Long, Hotel> hotels = new HashMap<>();
-	private long nextId = 0;
+	//private long nextId = 0;
 
 	private HotelService() {}
 
@@ -29,121 +31,77 @@ public class HotelService {
 	}
 
 	public synchronized List<Hotel> findAll() {
-		return findAll(null);
+		return findAllByNameAndAddress(null, null);
 	}
 
-	public synchronized List<Hotel> findAll(String stringFilter) {
-		ArrayList<Hotel> arrayList = new ArrayList<>();
-		for (Hotel hotel : hotels.values()) {
-			try {
-				boolean passesFilter = (stringFilter == null || stringFilter.isEmpty())
-						|| hotel.toString().toLowerCase().contains(stringFilter.toLowerCase());
-				if (passesFilter) {
-					arrayList.add(hotel.clone());
-				}
-			} catch (CloneNotSupportedException ex) {
-				Logger.getLogger(HotelService.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		}
-		Collections.sort(arrayList, new Comparator<Hotel>() {
-
-			@Override
-			public int compare(Hotel o1, Hotel o2) {
-				return (int) (o2.getId() - o1.getId());
-			}
-		});
-		return arrayList;
-	}
-
-    public synchronized List<Hotel> findAll(String stringFilter, String filterOption) {
-        ArrayList<Hotel> arrayList = new ArrayList<>();
-        for (Hotel hotel : hotels.values()) {
-            try {
-                boolean passesFilter=false;
-                boolean passesFilterWithFilterOption=false;
-
-                passesFilter = (stringFilter == null || stringFilter.isEmpty());
-
-                switch (filterOption) {
-                    case "by name":
-                        passesFilterWithFilterOption=hotel.getName().toLowerCase().contains(stringFilter.toLowerCase());
-                        break;
-                    case "by address":
-                        passesFilterWithFilterOption=hotel.getAddress().toLowerCase().contains(stringFilter.toLowerCase());
-                        break;
-                    case "by category":
-                        passesFilterWithFilterOption=hotel.getCategory().toString().equals(stringFilter);
-                        break;
-
-                }
-
-                if (passesFilter || passesFilterWithFilterOption) {
-                    arrayList.add(hotel.clone());
-                }
-            } catch (CloneNotSupportedException ex) {
-                Logger.getLogger(HotelService.class.getName()).log(Level.SEVERE, null, ex);
+    public synchronized List<Hotel> findAllByCategory(String category) {
+        DAOHotel daoHotel = new DAOHotel();
+        List<Hotel> list = daoHotel.getList();
+        for (int i = 0; i < list.size();) {
+            Hotel hotel = list.get(i);
+            if (hotel.getCategoryID().toString().equals(category)) {
+                i++;
+                continue;
             }
+            list.remove(i);
         }
-
-        Collections.sort(arrayList, new Comparator<Hotel>() {
-
-            @Override
-            public int compare(Hotel o1, Hotel o2) {
-                return (int) (o2.getId() - o1.getId());
-            }
-        });
-        return arrayList;
+        sortList(list);
+        return list;
     }
 
-	public synchronized List<Hotel> findAll(String stringFilter, int start, int maxresults) {
-		ArrayList<Hotel> arrayList = new ArrayList<>();
-		for (Hotel contact : hotels.values()) {
-			try {
-				boolean passesFilter = (stringFilter == null || stringFilter.isEmpty())
-						|| contact.toString().toLowerCase().contains(stringFilter.toLowerCase());
-				if (passesFilter) {
-					arrayList.add(contact.clone());
-				}
-			} catch (CloneNotSupportedException ex) {
-				Logger.getLogger(HotelService.class.getName()).log(Level.SEVERE, null, ex);
+	public synchronized List<Hotel> findAllByNameAndAddress(String name, String address) {
+		DAOHotel daoHotel = new DAOHotel();
+		List<Hotel> list = daoHotel.getList();
+		for (int i = 0; i < list.size();) {
+			Hotel hotel = list.get(i);
+			if (stringIncludes(name, hotel.getName()) && stringIncludes(address, hotel.getAddress())) {
+				i++;
+				continue;
 			}
+			list.remove(i);
 		}
-		Collections.sort(arrayList, new Comparator<Hotel>() {
+		sortList(list);
+		return list;
+	}
 
+	private void sortList(List<Hotel> list) {
+		Collections.sort(list, new Comparator<Hotel>() {
 			@Override
 			public int compare(Hotel o1, Hotel o2) {
-				return (int) (o2.getId() - o1.getId());
+				return (int) (o1.getId() - o2.getId());
 			}
 		});
-		int end = start + maxresults;
-		if (end > arrayList.size()) {
-			end = arrayList.size();
-		}
-		return arrayList.subList(start, end);
 	}
+
+	private boolean stringIncludes(String insertion, String string) {
+		return insertion == null || insertion.isEmpty() || string.toLowerCase().contains(insertion.toLowerCase());
+	}
+
 
 	public synchronized Integer count() {
 		return hotels.size();
 	}
 
-	public synchronized void delete(Hotel value) {
-		hotels.remove(value.getId());
+	public synchronized void delete(Hotel hotel) {
+		//hotels.remove(value.getId());
+
+        DAOHotel daoHotel = new DAOHotel();
+        daoHotel.delete(hotel);
 	}
 
-	public synchronized void save(Hotel entry) {
-		if (entry == null) {
+	public synchronized void save(Hotel hotel) {
+		if (hotel == null) {
 			LOGGER.log(Level.SEVERE, "Hotel is null.");
 			return;
 		}
-		if (entry.getId() == null) {
-			entry.setId(nextId++);
+
+		DAOHotel daoHotel = new DAOHotel();
+		if (hotel.getId() != null) {
+			daoHotel.update(hotel);
+			return;
 		}
-		try {
-			entry = (Hotel) entry.clone();
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
-		}
-		hotels.put(entry.getId(), entry);
+		daoHotel.create(hotel);
+
 	}
 
 	private String getHotelDescription() {
@@ -158,7 +116,7 @@ public class HotelService {
     }
 
 	public void ensureTestData() {
-		List<Category> categoriesList = CategoryService.getInstance().findAll();
+		List<HotelCategory> categoriesList = CategoryService.getInstance().findAll();
 		if (findAll().isEmpty()) {
 			final String[] hotelData = new String[] {
 					"3 Nagas Luang Prabang - MGallery by Sofitel;4;https://www.booking.com/hotel/la/3-nagas-luang-prabang-by-accor.en-gb.html;Vat Nong Village, Sakkaline Road, Democratic Republic Lao, 06000 Luang Prabang, Laos;",
@@ -194,11 +152,12 @@ public class HotelService {
 				h.setUrl(split[2]);
 				h.setAddress(split[3]);
 				//h.setCategory(HotelCategory.values()[r.nextInt(HotelCategory.values().length)]);
-				h.setCategory(categoriesList.get(r.nextInt(categoriesList.size())));
+				//h.setCategory(categoriesList.get(r.nextInt(categoriesList.size())).toString());
+				//h.setCategoryID(categoriesList.get(r.nextInt(categoriesList.size())).getId());
 				long daysOld = r.nextInt(365 * 30);
 				h.setOperatesFrom(LocalDate.now().minusDays(daysOld));
 				h.setDescription(getHotelDescription());
-				save(h);
+				//save(h);
 			}
 		}
 	}
