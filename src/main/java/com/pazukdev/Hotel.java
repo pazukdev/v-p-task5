@@ -2,11 +2,7 @@ package com.pazukdev;
 
 
 
-import com.vaadin.spring.annotation.SpringComponent;
-import com.vaadin.spring.annotation.VaadinSessionScope;
-
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlIDREF;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -31,7 +27,7 @@ public class Hotel implements Serializable, Cloneable {
 	private Integer rating;
 
 	@Column(name="OPERATES_FROM")
-	private Long operatesFrom;
+	private Long operatesFromDay;
 
 	@Column(name="CATEGORY")
 	private Integer categoryID;
@@ -81,18 +77,18 @@ public class Hotel implements Serializable, Cloneable {
 
     public Hotel() {}
 
-	public Hotel(LocalDate yesterday) {
-	    this.operatesFrom = yesterday.toEpochDay();
-    }
+	/*public Hotel(LocalDate yesterday) {
+	    this.operatesFromDay = yesterday.toEpochDay();
+    }*/
 
-    public Hotel(Long id, String name, String address, Integer rating, Long operatesFrom, Integer categoryID,
-                 String url, String description) {
+    public Hotel(Long id, String name, String address, Integer rating, Long operatesFromDay, Integer categoryID,
+				 String url, String description) {
         super();
         this.id = id;
         this.name = name;
         this.address = address;
         this.rating = rating;
-        this.operatesFrom = operatesFrom;
+        this.operatesFromDay = operatesFromDay;
         this.categoryID = categoryID;
         this.url = url;
         this.description=description;
@@ -106,6 +102,7 @@ public class Hotel implements Serializable, Cloneable {
 		this.id = id;
 	}
 
+
 	public String getName() {
 		return name;
 	}
@@ -113,12 +110,14 @@ public class Hotel implements Serializable, Cloneable {
 		this.name = name;
 	}
 
+
 	public String getAddress() {
 		return address;
 	}
 	public void setAddress(String address) {
 		this.address = address;
 	}
+
 
 	public Integer getRating() {
 		return rating;
@@ -128,20 +127,21 @@ public class Hotel implements Serializable, Cloneable {
 	}
 
 
-	public LocalDate getOperatesFrom() {
-		return LocalDate.ofEpochDay(this.operatesFrom);
+	public Long getOperatesFromDay() {
+		return operatesFromDay;
 	}
-
-    public void setOperatesFrom(LocalDate date) {
-        this.operatesFrom = date.toEpochDay();
+    public void setOperatesFromDay(Long operatesFromDay) {
+        this.operatesFromDay = operatesFromDay;
     }
+
 
 	public Integer getCategoryID() {
 		return categoryID;
 	}
 	public void setCategoryID(Integer categoryID) {
 	    this.categoryID = categoryID;
-	}	
+	}
+
 
 	public String getUrl() {
 		return url;
@@ -149,6 +149,7 @@ public class Hotel implements Serializable, Cloneable {
 	public void setUrl(String url) {
 	    this.url=url;
 	}
+
 
 	public String getDescription() {
 		return description;

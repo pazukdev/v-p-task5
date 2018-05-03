@@ -5,15 +5,14 @@ import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.*;
 
 import java.util.List;
-import java.util.Set;
 
 public class CategoryForm extends FormLayout implements View {
-
-    private HotelService hotelService =HotelService.getInstance();
     private CategoryService categoryService=CategoryService.getInstance();
 
     private Grid<HotelCategory> categoryGrid =new Grid<>(HotelCategory.class);
 
+    private HorizontalLayout categoryMainLayout;
+    private HorizontalLayout categoryToolbar;
 
     private Button addCategory= new Button("Add category");
     private Button deleteCategory = new Button("Delete category");
@@ -24,40 +23,18 @@ public class CategoryForm extends FormLayout implements View {
 
 
     public CategoryForm() {
+        //Components init and settings
+        setGrid();
+        setButtons();
+        setLayouts();
 
-        addCategory.addClickListener(event -> {
-            categoryGrid.asMultiSelect().clear();
-            categoryEditForm.editCategory(new HotelCategory());
-        });
+        updateCategoryList();
 
-        deleteCategory.setEnabled(false);
-        /*deleteCategory.addClickListener(event -> {
-            Set<HotelCategory> deleteCandidates=categoryGrid.getSelectedItems();
-            for(HotelCategory category : deleteCandidates) {
-                List<Hotel> hotelsList = hotelService.findAll(category.toString(), "by category");
-                for(Hotel hotel : hotelsList) {
-                    hotel.setCategory(CategoryService.getNullCategory().toString());
-                    //hotel.setCategory(null);
-                    hotelService.save(hotel);
-                }
-                categoryService.delete(category);
-            }
-            updateCategoryList();
-            //updateHotelList();
-        });*/
-        deleteCategory.addClickListener(e -> deleteSelected());
+        addComponents(categoryToolbar, categoryMainLayout);
+    }
 
-        editCategory.setEnabled(false);
-        editCategory.addClickListener(event -> {
-            categoryEditForm.editCategory(categoryGrid.getSelectedItems().iterator().next());
-        });
 
-        /*String categoryToolbarElementsWidth="100px";
-        addCategory.setWidth(categoryToolbarElementsWidth);
-        deleteCategory.setWidth(categoryToolbarElementsWidth);
-        editCategory.setWidth(categoryToolbarElementsWidth);*/
-        HorizontalLayout categoryToolbar = new HorizontalLayout(addCategory, deleteCategory, editCategory);
-
+    private void setGrid() {
         categoryGrid.setColumns(
                 //"id",
                 "name"
@@ -66,33 +43,39 @@ public class CategoryForm extends FormLayout implements View {
         categoryGrid.sort(categoryGrid.getColumn("name"), SortDirection.ASCENDING);
         categoryGrid.setWidth("444px");
         categoryGrid.addSelectionListener(e -> selectionCheck());
-        /*categoryGrid.asMultiSelect().addSelectionListener(event -> {
-            if(event.getValue().isEmpty()) {
-                deleteCategory.setEnabled(false);
-                editCategory.setEnabled(false);
-                categoryEditForm.setVisible(false);
-            }
-            else if(event.getValue().size()==1) {
-                deleteCategory.setEnabled(true);
-                editCategory.setEnabled(true);
-            }
-            else if(event.getValue().size()>1){
-                deleteCategory.setEnabled(true);
-                editCategory.setEnabled(false);
-                categoryEditForm.setVisible(false);
-            }
-        });*/
+    }
 
-        HorizontalLayout mainCategory = new HorizontalLayout(categoryGrid, categoryEditForm);
 
+    private void setLayouts() {
+        // Toolbar
+        categoryToolbar = new HorizontalLayout(addCategory, deleteCategory, editCategory);
+
+        // Category edit form
         categoryEditForm.setVisible(false);
 
-        updateCategoryList();
-
-        addComponents(categoryToolbar, mainCategory);
-
-
+        // Main layout
+        categoryMainLayout = new HorizontalLayout(categoryGrid, categoryEditForm);
     }
+
+
+    private void setButtons() {
+        //Add button
+        addCategory.addClickListener(event -> {
+            categoryGrid.asMultiSelect().clear();
+            categoryEditForm.editCategory(new HotelCategory());
+        });
+
+        // Delete button
+        deleteCategory.setEnabled(false);
+        deleteCategory.addClickListener(e -> deleteSelected());
+
+        // Edit button
+        editCategory.setEnabled(false);
+        editCategory.addClickListener(event -> {
+            categoryEditForm.editCategory(categoryGrid.getSelectedItems().iterator().next());
+        });
+    }
+
 
     private void deleteSelected() {
         for (HotelCategory category : categoryGrid.getSelectedItems()) {
@@ -101,9 +84,14 @@ public class CategoryForm extends FormLayout implements View {
         updateCategoryList();
     }
 
+
     private void selectionCheck() {
-        editCategory.setEnabled(categoryGrid.getSelectedItems().size() == 1);
-        deleteCategory.setEnabled(categoryGrid.getSelectedItems().size() > 0);
+        int selectedRowsNumber = categoryGrid.getSelectedItems().size();
+        if(categoryEditForm.isVisible()) {
+            categoryEditForm.setVisible(false);
+        }
+        editCategory.setEnabled(selectedRowsNumber == 1);
+        deleteCategory.setEnabled(selectedRowsNumber > 0);
     }
 
 
@@ -111,6 +99,5 @@ public class CategoryForm extends FormLayout implements View {
         List<HotelCategory> categories = categoryService.findAll();
         categoryGrid.setItems(categories);
     }
-
 
 }

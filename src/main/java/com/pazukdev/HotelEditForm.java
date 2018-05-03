@@ -19,13 +19,12 @@ public class HotelEditForm extends FormLayout {
     private TextField name = new TextField("Name");
     private TextField address = new TextField("Address");
     private TextField rating = new TextField("Rating");
-    private DateField operatesFrom = new DateField("Date");
+    private DateField operatesFrom = new DateField("Operates from");
     private NativeSelect<Integer> category = new NativeSelect<>("HotelCategory");
     private TextArea description = new TextArea("Description");
     private TextField url = new TextField("URL");
 
-
-
+    private HorizontalLayout buttons;
     private Button save = new Button("Save");
     private Button close = new Button("Close");
 
@@ -38,17 +37,32 @@ public class HotelEditForm extends FormLayout {
     public HotelEditForm(HotelForm hotelForm) {
         this.hotelForm = hotelForm;
 
-        name.setValueChangeMode(ValueChangeMode.EAGER);
+        // Form elements settings
+        setDescriptions();
+        setFieldsSettings();
+        setButtonsSettings();
+        setFieldsValueChangeMode();
+        setLayoutsSettings();
+        setComponentsSize();
+
+        bindFields();
+        addComponents(name, address, rating, operatesFrom, category, description, url, buttons);
+
+    }
+
+
+    private void setDescriptions() {
         name.setDescription("Hotel name");
-
-        address.setValueChangeMode(ValueChangeMode.EAGER);
         address.setDescription("Hotel address");
-
-        rating.setValueChangeMode(ValueChangeMode.EAGER);
         rating.setDescription("Hotel star rating. Numbers: 0, 1, 2, 3, 4, 5");
-
-        category.setWidth("186px");
         category.setDescription("Hotel category");
+        operatesFrom.setDescription("Hotel operates since");
+        url.setDescription("Link to hotel page on booking.com");
+        description.setDescription("Any additional info about hotel");
+    }
+
+    private void setFieldsSettings() {
+        // Category
         List<Integer> categories = new ArrayList<>();
         for (HotelCategory category : CategoryService.getInstance().findAll()) {
             categories.add(category.getId());
@@ -56,15 +70,45 @@ public class HotelEditForm extends FormLayout {
         category.setItemCaptionGenerator(i -> categoryService.findById(i).getName());
         category.setItems(categories);
 
-        operatesFrom.setDescription("Hotel operates since");
+        // Operates from
         operatesFrom.setRangeEnd(LocalDate.now().minusDays(1L));
+    }
 
+    private void setButtonsSettings() {
+        // Button Save
+        save.setStyleName(ValoTheme.BUTTON_PRIMARY);
+        save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+        save.addClickListener(e -> {
+            if(binder.validate().isOk()) this.save();
+        });
+        save.setEnabled(false);
+
+        // Button Close
+        close.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
+        close.addClickListener(e -> this.close());
+    }
+
+    private void setFieldsValueChangeMode() {
+        name.setValueChangeMode(ValueChangeMode.EAGER);
+        address.setValueChangeMode(ValueChangeMode.EAGER);
+        rating.setValueChangeMode(ValueChangeMode.EAGER);
         url.setValueChangeMode(ValueChangeMode.EAGER);
-        url.setDescription("Link to hotel page on booking.com");
-
         description.setValueChangeMode(ValueChangeMode.EAGER);
-        description.setDescription("Any additional info about hotel");
+    }
 
+    private void setLayoutsSettings() {
+        buttons = new HorizontalLayout(save, close);
+        buttons.setComponentAlignment(close, Alignment.MIDDLE_RIGHT);
+    }
+
+    private void setComponentsSize() {
+        category.setWidth("186px");
+        save.setWidth("86px");
+        close.setWidth("86px");
+        buttons.setWidth("186px");
+    }
+
+    private void bindFields() {
         binder.forField(name)
                 .asRequired("The field shouldn't be empty")
                 .withNullRepresentation("")
@@ -75,7 +119,6 @@ public class HotelEditForm extends FormLayout {
                 .withNullRepresentation("")
                 .bind(Hotel:: getAddress, Hotel:: setAddress);
 
-
         binder.forField(rating)
                 .asRequired("The field shouldn't be empty")
                 .withNullRepresentation("")
@@ -85,62 +128,31 @@ public class HotelEditForm extends FormLayout {
 
         binder.forField(operatesFrom)
                 .asRequired("The field shouldn't be empty")
-                .withValidator(dateOperatesFrom -> dateOperatesFrom.isBefore(LocalDate.now()),
-                        "Wrong date. Date should be before present day")
-                .bind(Hotel:: getOperatesFrom, Hotel:: setOperatesFrom);
+                .withConverter(new LocalDateToDaysConverter())
+                .bind(Hotel::getOperatesFromDay, Hotel::setOperatesFromDay);
 
         binder.forField(category)
                 .asRequired("The field shouldn't be empty")
                 .bind(Hotel:: getCategoryID, Hotel:: setCategoryID);
 
         String urlRegex = "^http(s{0,1})://[a-zA-Z0-9_/\\-\\.]+\\.([A-Za-z/]{2,5})[a-zA-Z0-9_/\\&\\?\\=\\-\\.\\~\\%]*";
-        //String urlRegex = "^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
         binder.forField(url)
                 .asRequired("The field shouldn't be empty")
                 .withNullRepresentation("")
                 .withValidator(new RegexpValidator("This is incorrect URL", urlRegex))
                 .bind(Hotel:: getUrl, Hotel:: setUrl);
 
-        binder.bindInstanceFields(this);
+        binder.forField(description)
+                .withNullRepresentation("")
+                .bind(Hotel::getDescription, Hotel::setDescription);
 
-        save.setStyleName(ValoTheme.BUTTON_PRIMARY);
-        save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-        save.addClickListener(e -> {
-            if(binder.validate().isOk()) this.save();
-        });
-        save.setWidth("86px");
-        save.setEnabled(false);
-
-        close.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
-        close.addClickListener(e -> this.close());
-        close.setWidth("86px");
-
-        HorizontalLayout buttons = new HorizontalLayout(save, close);
-        buttons.setWidth("186px");
-        buttons.setComponentAlignment(close, Alignment.MIDDLE_RIGHT);
-
-        addComponents(name, address, rating, operatesFrom, category, description, url, buttons);
-
-
+        //binder.bindInstanceFields(this);
 
     }
 
+
     public void editHotel(Hotel hotel) {
-
-        /*category.setItems(categoryService.findAll());
-
-        this.hotel=hotel;
-        binder.readBean(hotel);
-
-        binder.addStatusChangeListener(event -> {
-            boolean isValid = event.getBinder().isValid();
-            boolean hasChanges = event.getBinder().hasChanges();
-            save.setEnabled(hasChanges && isValid);
-        });
-
-        setVisible(true);
-        name.selectAll();*/
-
+        //category.setItems(categoryService.findAll());
         this.hotel = hotel;
         binder.readBean(hotel);
         if (CategoryService.getInstance().findById(hotel.getCategoryID()) == null) {
@@ -151,46 +163,26 @@ public class HotelEditForm extends FormLayout {
             boolean hasChanges = event.getBinder().hasChanges();
             save.setEnabled(hasChanges && isValid);
         });
-        //delete.setVisible(hotel.isPersisted());
+
         setVisible(true);
         name.selectAll();
-
     }
+
 
     private void close() {
         setVisible(false);
     }
 
-    private void delete() {
-        hotelService.delete(hotel);
-        hotelForm.updateHotelList();
-        setVisible(false);
-    }
 
     private void save() {
-        /*try {
+        try {
             binder.writeBean(hotel);
         } catch (ValidationException e) {
             e.printStackTrace();
         }
         hotelService.save(hotel);
         hotelForm.updateHotelList();
-        setVisible(false);*/
-
-        if (binder.isValid()) {
-            try {
-                binder.writeBean(hotel);
-            } catch (ValidationException e) {
-                e.printStackTrace();
-            }
-            hotelService.save(hotel);
-            hotelForm.updateHotelList();
-            //hotelForm.swapComponentsVisibility();
-            setVisible(false);
-        } else {
-            binder.validate();
-        }
-
+        setVisible(false);
     }
 
 

@@ -15,31 +15,29 @@ public class HotelService {
 	private static HotelService instance;
 	private static final Logger LOGGER = Logger.getLogger(HotelService.class.getName());
 
-	//DAOHotel daoHotel = new DAOHotel();
-
 	private final HashMap<Long, Hotel> hotels = new HashMap<>();
-	//private long nextId = 0;
+	private DAOHotel daoHotel = new DAOHotel();
+
 
 	private HotelService() {}
 
 	public static HotelService getInstance() {
 		if (instance == null) {
 			instance = new HotelService();
-			instance.ensureTestData();
+			//instance.ensureTestData();
 		}
 		return instance;
 	}
 
 	public synchronized List<Hotel> findAll() {
-		return findAllByNameAndAddress(null, null);
+		return findByNameAndAddress(null, null);
 	}
 
-    public synchronized List<Hotel> findAllByCategory(String category) {
-        DAOHotel daoHotel = new DAOHotel();
+    /*public synchronized List<Hotel> findByCategory(Integer categoryID) {
         List<Hotel> list = daoHotel.getList();
         for (int i = 0; i < list.size();) {
             Hotel hotel = list.get(i);
-            if (hotel.getCategoryID().toString().equals(category)) {
+            if (hotel.getCategoryID() == categoryID) {
                 i++;
                 continue;
             }
@@ -47,10 +45,9 @@ public class HotelService {
         }
         sortList(list);
         return list;
-    }
+    }*/
 
-	public synchronized List<Hotel> findAllByNameAndAddress(String name, String address) {
-		DAOHotel daoHotel = new DAOHotel();
+	public synchronized List<Hotel> findByNameAndAddress(String name, String address) {
 		List<Hotel> list = daoHotel.getList();
 		for (int i = 0; i < list.size();) {
 			Hotel hotel = list.get(i);
@@ -77,15 +74,11 @@ public class HotelService {
 		return insertion == null || insertion.isEmpty() || string.toLowerCase().contains(insertion.toLowerCase());
 	}
 
-
 	public synchronized Integer count() {
 		return hotels.size();
 	}
 
 	public synchronized void delete(Hotel hotel) {
-		//hotels.remove(value.getId());
-
-        DAOHotel daoHotel = new DAOHotel();
         daoHotel.delete(hotel);
 	}
 
@@ -95,7 +88,6 @@ public class HotelService {
 			return;
 		}
 
-		DAOHotel daoHotel = new DAOHotel();
 		if (hotel.getId() != null) {
 			daoHotel.update(hotel);
 			return;
@@ -104,7 +96,7 @@ public class HotelService {
 
 	}
 
-	private String getHotelDescription() {
+	/*private String getHotelDescription() {
 	    List<String> descriptionsList=new ArrayList<>();
 	    descriptionsList.add("Good hotel");
 	    descriptionsList.add("Not bad hotel");
@@ -155,11 +147,11 @@ public class HotelService {
 				//h.setCategory(categoriesList.get(r.nextInt(categoriesList.size())).toString());
 				//h.setCategoryID(categoriesList.get(r.nextInt(categoriesList.size())).getId());
 				long daysOld = r.nextInt(365 * 30);
-				h.setOperatesFrom(LocalDate.now().minusDays(daysOld));
+				h.setOperatesFromDay(LocalDate.now().minusDays(daysOld).toEpochDay());
 				h.setDescription(getHotelDescription());
 				//save(h);
 			}
 		}
-	}
+	}*/
 
 }

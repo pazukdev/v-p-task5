@@ -49,7 +49,7 @@ public class DAOHotel implements DAOInterface<Hotel> {
 			h.setName(hotel.getName());
 			h.setAddress(hotel.getAddress());
 			h.setRating(hotel.getRating());
-			h.setOperatesFrom(hotel.getOperatesFrom());
+			h.setOperatesFromDay(hotel.getOperatesFromDay());
 			h.setCategoryID(hotel.getCategoryID());
 			h.setUrl(hotel.getUrl());
 			h.setDescription(hotel.getDescription());
