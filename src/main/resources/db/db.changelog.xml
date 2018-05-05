@@ -46,7 +46,7 @@
 
 	<changeSet id="CATEGORY_CREATE" author="sviarkaltsau">
 		<createTable tableName="CATEGORY">
-			<column name="ID" type="INT" autoIncrement="true">
+			<column name="ID" type="BIGINT" autoIncrement="true">
 				<constraints primaryKey="true" />
 			</column>
 			<column name="OPTLOCK" type="BIGINT" />

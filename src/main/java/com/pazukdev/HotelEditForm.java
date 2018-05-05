@@ -12,6 +12,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 public class HotelEditForm extends FormLayout {
@@ -20,7 +21,7 @@ public class HotelEditForm extends FormLayout {
     private TextField address = new TextField("Address");
     private TextField rating = new TextField("Rating");
     private DateField operatesFrom = new DateField("Operates from");
-    private NativeSelect<Integer> category = new NativeSelect<>("HotelCategory");
+    private NativeSelect<HotelCategory> category = new NativeSelect<>("HotelCategory");
     private TextArea description = new TextArea("Description");
     private TextField url = new TextField("URL");
 
@@ -34,14 +35,15 @@ public class HotelEditForm extends FormLayout {
     private HotelForm hotelForm;
     private Binder<Hotel> binder = new Binder<>(Hotel.class);
 
+    private int inputLengthLimit;
+
     public HotelEditForm(HotelForm hotelForm) {
         this.hotelForm = hotelForm;
 
         // Form elements settings
-        setDescriptions();
         setFieldsSettings();
+        setDescriptions();
         setButtonsSettings();
-        setFieldsValueChangeMode();
         setLayoutsSettings();
         setComponentsSize();
 
@@ -52,22 +54,26 @@ public class HotelEditForm extends FormLayout {
 
 
     private void setDescriptions() {
-        name.setDescription("Hotel name");
-        address.setDescription("Hotel address");
+        String maxLength = ". Max length: " + inputLengthLimit + " characters";
+
+        name.setDescription("Hotel name" + maxLength);
+        address.setDescription("Hotel address" + maxLength);
         rating.setDescription("Hotel star rating. Numbers: 0, 1, 2, 3, 4, 5");
         category.setDescription("Hotel category");
         operatesFrom.setDescription("Hotel operates since");
-        url.setDescription("Link to hotel page on booking.com");
+        url.setDescription("Link to hotel page on booking.com" + maxLength);
         description.setDescription("Any additional info about hotel");
     }
 
     private void setFieldsSettings() {
+        inputLengthLimit =255;
+
         // Category
-        List<Integer> categories = new ArrayList<>();
-        for (HotelCategory category : CategoryService.getInstance().findAll()) {
-            categories.add(category.getId());
+        List<HotelCategory> categories = new ArrayList<>();
+        for (HotelCategory category : categoryService.findAll()) {
+            categories.add(category);
         }
-        category.setItemCaptionGenerator(i -> categoryService.findById(i).getName());
+        //category.setItemCaptionGenerator(i -> categoryService.findById(i.longValue()).getName());
         category.setItems(categories);
 
         // Operates from
@@ -88,14 +94,6 @@ public class HotelEditForm extends FormLayout {
         close.addClickListener(e -> this.close());
     }
 
-    private void setFieldsValueChangeMode() {
-        name.setValueChangeMode(ValueChangeMode.EAGER);
-        address.setValueChangeMode(ValueChangeMode.EAGER);
-        rating.setValueChangeMode(ValueChangeMode.EAGER);
-        url.setValueChangeMode(ValueChangeMode.EAGER);
-        description.setValueChangeMode(ValueChangeMode.EAGER);
-    }
-
     private void setLayoutsSettings() {
         buttons = new HorizontalLayout(save, close);
         buttons.setComponentAlignment(close, Alignment.MIDDLE_RIGHT);
@@ -109,14 +107,18 @@ public class HotelEditForm extends FormLayout {
     }
 
     private void bindFields() {
+        String wrongLengthMessage = "Length limit is exceeded";
+
         binder.forField(name)
                 .asRequired("The field shouldn't be empty")
                 .withNullRepresentation("")
+                .withValidator(value -> value.length()<= inputLengthLimit, wrongLengthMessage)
                 .bind(Hotel:: getName, Hotel:: setName);
 
         binder.forField(address)
                 .asRequired("The field shouldn't be empty")
                 .withNullRepresentation("")
+                .withValidator(value -> value.length()<= inputLengthLimit, wrongLengthMessage)
                 .bind(Hotel:: getAddress, Hotel:: setAddress);
 
         binder.forField(rating)
@@ -133,20 +135,20 @@ public class HotelEditForm extends FormLayout {
 
         binder.forField(category)
                 .asRequired("The field shouldn't be empty")
-                .bind(Hotel:: getCategoryID, Hotel:: setCategoryID);
+                .withConverter(new CategoryToCategoryIDConverter())
+                .bind(Hotel:: getCategory, Hotel:: setCategory);
 
         String urlRegex = "^http(s{0,1})://[a-zA-Z0-9_/\\-\\.]+\\.([A-Za-z/]{2,5})[a-zA-Z0-9_/\\&\\?\\=\\-\\.\\~\\%]*";
         binder.forField(url)
                 .asRequired("The field shouldn't be empty")
                 .withNullRepresentation("")
                 .withValidator(new RegexpValidator("This is incorrect URL", urlRegex))
+                .withValidator(value -> value.length()<= inputLengthLimit, wrongLengthMessage)
                 .bind(Hotel:: getUrl, Hotel:: setUrl);
 
         binder.forField(description)
                 .withNullRepresentation("")
                 .bind(Hotel::getDescription, Hotel::setDescription);
-
-        //binder.bindInstanceFields(this);
 
     }
 
@@ -155,7 +157,10 @@ public class HotelEditForm extends FormLayout {
         //category.setItems(categoryService.findAll());
         this.hotel = hotel;
         binder.readBean(hotel);
-        if (CategoryService.getInstance().findById(hotel.getCategoryID()) == null) {
+        /*if (categoryService.findById(hotel.getCategoryID().longValue()) == null) {
+            category.setSelectedItem(null);
+        }*/
+        if (hotel.getCategory() == null) {
             category.setSelectedItem(null);
         }
         binder.addStatusChangeListener(event -> {

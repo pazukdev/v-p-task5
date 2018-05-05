@@ -30,9 +30,7 @@ public class DataProvider {
         instance = new DataProvider();
     }
 
-    private DataProvider() {
-
-    }
+    private DataProvider() {}
 
     public static EntityManagerFactory getEntityManagerFactory() {
         return entityManagerFactory;
@@ -42,7 +40,7 @@ public class DataProvider {
         return entityManagerFactory.createEntityManager();
     }
 
-    public static DataProvider getInstatnce() {
+    public static DataProvider getInstance() {
         return instance;
     }
 

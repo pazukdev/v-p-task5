@@ -37,10 +37,12 @@ public class CategoryService {
     }
 
 
-    public synchronized HotelCategory findById(Integer id) {
+    public synchronized HotelCategory findById(Long id) {
         if (id != null) {
-            HotelCategory category = daoHotelCategory.read(new HotelCategory(id));
-            return category;
+            for(HotelCategory category : daoHotelCategory.getList()) {
+                if(category.getId() == id) return category;
+            }
+            return null;
         }
         return null;
     }
@@ -80,8 +82,7 @@ public class CategoryService {
     }
 
 
-    /*public void ensureTestData() {
-
+    public void ensureTestData() {
         //nullCategory.setName("No category");
 
         if (findAll().isEmpty()) {
@@ -93,9 +94,9 @@ public class CategoryService {
 
                 HotelCategory category = new HotelCategory();
                 category.setName(categoryName);
-                //save(category);
+                save(category);
             }
         }
-    }*/
+    }
 
 }

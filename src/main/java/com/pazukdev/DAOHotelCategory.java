@@ -11,11 +11,11 @@ import javax.persistence.criteria.Root;
 public class DAOHotelCategory implements DAOInterface<HotelCategory> {
 
     @Override
-    public void create(HotelCategory hotelCategory) {
+    public void create(HotelCategory category) {
         EntityManager em = DataProvider.getEntityManager();
         try {
             em.getTransaction().begin();
-            em.persist(hotelCategory);
+            em.persist(category);
             em.getTransaction().commit();
         } catch (Exception e) {
             em.getTransaction().rollback();
@@ -26,11 +26,11 @@ public class DAOHotelCategory implements DAOInterface<HotelCategory> {
     }
 
     @Override
-    public HotelCategory read(HotelCategory hotelCategory) {
+    public HotelCategory read(HotelCategory category) {
         EntityManager em = DataProvider.getEntityManager();
         try {
             em.getTransaction().begin();
-            HotelCategory hc = em.find(HotelCategory.class, hotelCategory.getId());
+            HotelCategory hc = em.find(HotelCategory.class, category.getId());
             em.getTransaction().commit();
             return hc;
         } catch (Exception e) {
@@ -42,12 +42,12 @@ public class DAOHotelCategory implements DAOInterface<HotelCategory> {
     }
 
     @Override
-    public void update(HotelCategory hotelCategory) {
+    public void update(HotelCategory category) {
         EntityManager em = DataProvider.getEntityManager();
         try {
             em.getTransaction().begin();
-            HotelCategory hc = em.find(HotelCategory.class, hotelCategory.getId());
-            hc.setName(hotelCategory.getName());
+            HotelCategory hc = em.find(HotelCategory.class, category.getId());
+            hc.setName(category.getName());
             em.getTransaction().commit();
         } catch (Exception e) {
             em.getTransaction().rollback();
@@ -58,11 +58,11 @@ public class DAOHotelCategory implements DAOInterface<HotelCategory> {
     }
 
     @Override
-    public void delete(HotelCategory hotelCategory) {
+    public void delete(HotelCategory category) {
         EntityManager em = DataProvider.getEntityManager();
         try {
             em.getTransaction().begin();
-            HotelCategory hc = em.find(HotelCategory.class, hotelCategory.getId());
+            HotelCategory hc = em.find(HotelCategory.class, category.getId());
             em.remove(hc);
             em.getTransaction().commit();
         } catch (Exception e) {

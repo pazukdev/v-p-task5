@@ -16,7 +16,8 @@ import java.util.List;
 
 @Theme("mytheme")
 public class HotelForm extends FormLayout implements View {
-    private HotelService hotelService =HotelService.getInstance();
+    private HotelService hotelService = HotelService.getInstance();
+    private CategoryService categoryService = CategoryService.getInstance();
 
     private Grid<Hotel> hotelGrid =new Grid<>(Hotel.class);
 
@@ -76,7 +77,7 @@ public class HotelForm extends FormLayout implements View {
         }).setCaption("Operates from");
 
         Grid.Column<Hotel, String> categoryColumn = hotelGrid.addColumn(hotel -> {
-            HotelCategory category = CategoryService.getInstance().findById(hotel.getCategoryID());
+            HotelCategory category = categoryService.findById(hotel.getCategory());
             if (category != null) {
                 return category.getName();
             }

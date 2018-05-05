@@ -34,12 +34,12 @@ public class CategoryEditForm extends FormLayout {
         setLayoutsSettings();
         setComponentsSize();
 
-        name.setValueChangeMode(ValueChangeMode.EAGER);
-        name.setDescription("HotelCategory name");
+        name.setDescription("HotelCategory name. Max length: 255 characters");
 
         binder.forField(name)
                 .asRequired("The field shouldn't be empty")
                 .withNullRepresentation("")
+                .withValidator(value -> value.length()<=255, "Length limit is exceeded")
                 .bind(HotelCategory:: getName, HotelCategory:: setName);
 
         addComponents(name, buttons);

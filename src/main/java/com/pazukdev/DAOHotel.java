@@ -50,7 +50,7 @@ public class DAOHotel implements DAOInterface<Hotel> {
 			h.setAddress(hotel.getAddress());
 			h.setRating(hotel.getRating());
 			h.setOperatesFromDay(hotel.getOperatesFromDay());
-			h.setCategoryID(hotel.getCategoryID());
+			h.setCategory(hotel.getCategory());
 			h.setUrl(hotel.getUrl());
 			h.setDescription(hotel.getDescription());
 			em.getTransaction().commit();
@@ -80,7 +80,6 @@ public class DAOHotel implements DAOInterface<Hotel> {
 
 	@Override
 	public List<Hotel> getList() {
-		// DataProvider.getEntityManager().flush();
 		EntityManager em = DataProvider.getEntityManager();
 		try {
 			em.getTransaction().begin();

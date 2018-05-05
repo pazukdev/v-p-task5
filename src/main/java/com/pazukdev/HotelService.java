@@ -21,6 +21,7 @@ public class HotelService {
 
 	private HotelService() {}
 
+
 	public static HotelService getInstance() {
 		if (instance == null) {
 			instance = new HotelService();
@@ -28,6 +29,7 @@ public class HotelService {
 		}
 		return instance;
 	}
+
 
 	public synchronized List<Hotel> findAll() {
 		return findByNameAndAddress(null, null);
@@ -47,6 +49,7 @@ public class HotelService {
         return list;
     }*/
 
+
 	public synchronized List<Hotel> findByNameAndAddress(String name, String address) {
 		List<Hotel> list = daoHotel.getList();
 		for (int i = 0; i < list.size();) {
@@ -61,6 +64,7 @@ public class HotelService {
 		return list;
 	}
 
+
 	private void sortList(List<Hotel> list) {
 		Collections.sort(list, new Comparator<Hotel>() {
 			@Override
@@ -70,17 +74,21 @@ public class HotelService {
 		});
 	}
 
+
 	private boolean stringIncludes(String insertion, String string) {
 		return insertion == null || insertion.isEmpty() || string.toLowerCase().contains(insertion.toLowerCase());
 	}
+
 
 	public synchronized Integer count() {
 		return hotels.size();
 	}
 
+
 	public synchronized void delete(Hotel hotel) {
         daoHotel.delete(hotel);
 	}
+
 
 	public synchronized void save(Hotel hotel) {
 		if (hotel == null) {
@@ -96,7 +104,8 @@ public class HotelService {
 
 	}
 
-	/*private String getHotelDescription() {
+
+	private String getHotelDescription() {
 	    List<String> descriptionsList=new ArrayList<>();
 	    descriptionsList.add("Good hotel");
 	    descriptionsList.add("Not bad hotel");
@@ -106,6 +115,7 @@ public class HotelService {
 
 	    return descriptionsList.get(random.nextInt(descriptionsList.size()));
     }
+
 
 	public void ensureTestData() {
 		List<HotelCategory> categoriesList = CategoryService.getInstance().findAll();
@@ -143,15 +153,13 @@ public class HotelService {
 				h.setRating(Integer.parseInt(split[1]));
 				h.setUrl(split[2]);
 				h.setAddress(split[3]);
-				//h.setCategory(HotelCategory.values()[r.nextInt(HotelCategory.values().length)]);
-				//h.setCategory(categoriesList.get(r.nextInt(categoriesList.size())).toString());
 				//h.setCategoryID(categoriesList.get(r.nextInt(categoriesList.size())).getId());
 				long daysOld = r.nextInt(365 * 30);
 				h.setOperatesFromDay(LocalDate.now().minusDays(daysOld).toEpochDay());
 				h.setDescription(getHotelDescription());
-				//save(h);
+				save(h);
 			}
 		}
-	}*/
+	}
 
 }
