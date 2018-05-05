@@ -1,12 +1,14 @@
-package com.pazukdev;
+package com.pazukdev.entities;
+
+import org.hibernate.annotations.OptimisticLockType;
+import org.hibernate.annotations.OptimisticLocking;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @SuppressWarnings("serial")
 @Entity
 @Table(name = "CATEGORY")
-public class HotelCategory extends AbstractEntity {
+public class Category extends AbstractEntity {
 
     @Column(name = "NAME")
     private String name;
@@ -19,12 +21,12 @@ public class HotelCategory extends AbstractEntity {
 
 
     @Override
-    protected HotelCategory clone() throws CloneNotSupportedException {
-        return (HotelCategory)super.clone();
+    protected Category clone() throws CloneNotSupportedException {
+        return (Category)super.clone();
     }
 
 
-    public HotelCategory() {}
+    public Category() {}
 
 
     public String getName() {

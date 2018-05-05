@@ -1,21 +1,21 @@
-package com.pazukdev;
+package com.pazukdev.converters;
 
+import com.pazukdev.services.CategoryService;
+import com.pazukdev.entities.Category;
 import com.vaadin.data.Converter;
 import com.vaadin.data.Result;
 import com.vaadin.data.ValueContext;
 
-import java.time.LocalDate;
-
 /**
  CategoryToCategoryIDConverter.java,
- convert HotelCategory to Long categoryID
+ convert Category to Long categoryID
  */
 
 @SuppressWarnings("serial")
-public class CategoryToCategoryIDConverter implements Converter<HotelCategory, Long> {
+public class CategoryToCategoryIDConverter implements Converter<Category, Long> {
 
     @Override
-    public Result<Long> convertToModel(HotelCategory value, ValueContext context) {
+    public Result<Long> convertToModel(Category value, ValueContext context) {
         if (value == null) {
             Result.ok(null);
         }
@@ -23,7 +23,7 @@ public class CategoryToCategoryIDConverter implements Converter<HotelCategory, L
     }
 
     @Override
-    public HotelCategory convertToPresentation(Long value, ValueContext context) {
+    public Category convertToPresentation(Long value, ValueContext context) {
         if (value == null) {
             return null;
         }

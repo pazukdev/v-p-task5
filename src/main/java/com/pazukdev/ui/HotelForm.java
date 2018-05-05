@@ -1,5 +1,9 @@
-package com.pazukdev;
+package com.pazukdev.ui;
 
+import com.pazukdev.entities.Category;
+import com.pazukdev.entities.Hotel;
+import com.pazukdev.services.CategoryService;
+import com.pazukdev.services.HotelService;
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
 import com.vaadin.shared.data.sort.SortDirection;
@@ -77,7 +81,7 @@ public class HotelForm extends FormLayout implements View {
         }).setCaption("Operates from");
 
         Grid.Column<Hotel, String> categoryColumn = hotelGrid.addColumn(hotel -> {
-            HotelCategory category = categoryService.findById(hotel.getCategory());
+            Category category = categoryService.findById(hotel.getCategory());
             if (category != null) {
                 return category.getName();
             }

@@ -1,4 +1,4 @@
-package com.pazukdev;
+package com.pazukdev.ui;
 
 import javax.servlet.annotation.WebListener;
 import javax.servlet.annotation.WebServlet;
@@ -66,9 +66,9 @@ public class MainUI extends UI {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
 
-                navigator.removeView("HotelCategory");
-                navigator.addView("HotelCategory", new CategoryForm());
-                navigator.navigateTo("HotelCategory");
+                navigator.removeView("Category");
+                navigator.addView("Category", new CategoryForm());
+                navigator.navigateTo("Category");
 
                 categoryItem.setEnabled(false);
                 hotelItem.setEnabled(true);
@@ -78,7 +78,7 @@ public class MainUI extends UI {
 
         hotelItem = menu.addItem("Hotel", VaadinIcons.BUILDING, command1);
         hotelItem.setEnabled(false);
-        categoryItem = menu.addItem("HotelCategory", VaadinIcons.ACADEMY_CAP, command2);
+        categoryItem = menu.addItem("Category", VaadinIcons.ACADEMY_CAP, command2);
         menu.setStyleName(ValoTheme.MENUBAR_BORDERLESS);
 
         navigator.addView("Hotels", new HotelForm());

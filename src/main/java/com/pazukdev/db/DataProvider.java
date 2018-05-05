@@ -1,4 +1,4 @@
-package com.pazukdev;
+package com.pazukdev.db;
 
 import java.io.IOException;
 import java.io.InputStream;

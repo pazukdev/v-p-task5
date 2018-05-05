@@ -1,5 +1,7 @@
-package com.pazukdev;
+package com.pazukdev.ui;
 
+import com.pazukdev.entities.Category;
+import com.pazukdev.services.CategoryService;
 import com.vaadin.navigator.View;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.*;
@@ -9,7 +11,7 @@ import java.util.List;
 public class CategoryForm extends FormLayout implements View {
     private CategoryService categoryService=CategoryService.getInstance();
 
-    private Grid<HotelCategory> categoryGrid =new Grid<>(HotelCategory.class);
+    private Grid<Category> categoryGrid =new Grid<>(Category.class);
 
     private HorizontalLayout categoryMainLayout;
     private HorizontalLayout categoryToolbar;
@@ -62,7 +64,7 @@ public class CategoryForm extends FormLayout implements View {
         //Add button
         addCategory.addClickListener(event -> {
             categoryGrid.asMultiSelect().clear();
-            categoryEditForm.editCategory(new HotelCategory());
+            categoryEditForm.editCategory(new Category());
         });
 
         // Delete button
@@ -78,7 +80,7 @@ public class CategoryForm extends FormLayout implements View {
 
 
     private void deleteSelected() {
-        for (HotelCategory category : categoryGrid.getSelectedItems()) {
+        for (Category category : categoryGrid.getSelectedItems()) {
             categoryService.delete(category);
         }
         updateCategoryList();
@@ -96,7 +98,7 @@ public class CategoryForm extends FormLayout implements View {
 
 
     public void updateCategoryList() {
-        List<HotelCategory> categories = categoryService.findAll();
+        List<Category> categories = categoryService.findAll();
         categoryGrid.setItems(categories);
     }
 

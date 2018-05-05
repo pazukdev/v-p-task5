@@ -1,4 +1,7 @@
-package com.pazukdev;
+package com.pazukdev.services;
+
+import com.pazukdev.dao.DAOCategory;
+import com.pazukdev.entities.Category;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -6,11 +9,11 @@ import java.util.logging.Logger;
 
 public class CategoryService {
     private static CategoryService instance;
-    private static final Logger LOGGER = Logger.getLogger(HotelCategory.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Category.class.getName());
 
-    private final HashMap<Long, HotelCategory> categories = new HashMap<>();
-    private DAOHotelCategory daoHotelCategory = new DAOHotelCategory();
-    //private static HotelCategory nullCategory=new HotelCategory();
+    private final HashMap<Long, Category> categories = new HashMap<>();
+    private com.pazukdev.dao.DAOCategory DAOCategory = new DAOCategory();
+    //private static Category nullCategory=new Category();
 
 
     private CategoryService() {}
@@ -25,21 +28,21 @@ public class CategoryService {
     }
 
 
-    /*public static HotelCategory getNullCategory() {
+    /*public static Category getNullCategory() {
         return nullCategory;
     }*/
 
 
-    public synchronized List<HotelCategory> findAll() {
-        List<HotelCategory> list = daoHotelCategory.getList();
+    public synchronized List<Category> findAll() {
+        List<Category> list = DAOCategory.getList();
         sortList(list);
         return list;
     }
 
 
-    public synchronized HotelCategory findById(Long id) {
+    public synchronized Category findById(Long id) {
         if (id != null) {
-            for(HotelCategory category : daoHotelCategory.getList()) {
+            for(Category category : DAOCategory.getList()) {
                 if(category.getId() == id) return category;
             }
             return null;
@@ -48,10 +51,10 @@ public class CategoryService {
     }
 
 
-    private void sortList(List<HotelCategory> list) {
-        Collections.sort(list, new Comparator<HotelCategory>() {
+    private void sortList(List<Category> list) {
+        Collections.sort(list, new Comparator<Category>() {
             @Override
-            public int compare(HotelCategory o1, HotelCategory o2) {
+            public int compare(Category o1, Category o2) {
                 return (int) (o1.getId() - o2.getId());
             }
         });
@@ -63,22 +66,22 @@ public class CategoryService {
     }
 
 
-    public synchronized void delete(HotelCategory category) {
-        daoHotelCategory.delete(category);
+    public synchronized void delete(Category category) {
+        DAOCategory.delete(category);
     }
 
 
-    public synchronized void save(HotelCategory category) {
+    public synchronized void save(Category category) {
         if (category == null) {
             LOGGER.log(Level.SEVERE, "Category is null.");
             return;
         }
 
         if (category.getId() != null) {
-            daoHotelCategory.update(category);
+            DAOCategory.update(category);
             return;
         }
-        daoHotelCategory.create(category);
+        DAOCategory.create(category);
     }
 
 
@@ -92,7 +95,7 @@ public class CategoryService {
 
             for (String categoryName : categoryData) {
 
-                HotelCategory category = new HotelCategory();
+                Category category = new Category();
                 category.setName(categoryName);
                 save(category);
             }

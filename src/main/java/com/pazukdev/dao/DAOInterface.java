@@ -1,4 +1,4 @@
-package com.pazukdev;
+package com.pazukdev.dao;
 
 import java.util.List;
 

@@ -1,4 +1,7 @@
-package com.pazukdev;
+package com.pazukdev.dao;
+
+import com.pazukdev.db.DataProvider;
+import com.pazukdev.entities.Hotel;
 
 import java.util.List;
 

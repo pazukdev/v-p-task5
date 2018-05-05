@@ -1,4 +1,7 @@
-package com.pazukdev;
+package com.pazukdev.dao;
+
+import com.pazukdev.db.DataProvider;
+import com.pazukdev.entities.Category;
 
 import java.util.List;
 
@@ -8,10 +11,10 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 
-public class DAOHotelCategory implements DAOInterface<HotelCategory> {
+public class DAOCategory implements DAOInterface<Category> {
 
     @Override
-    public void create(HotelCategory category) {
+    public void create(Category category) {
         EntityManager em = DataProvider.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -19,75 +22,75 @@ public class DAOHotelCategory implements DAOInterface<HotelCategory> {
             em.getTransaction().commit();
         } catch (Exception e) {
             em.getTransaction().rollback();
-            throw new RuntimeException("DAOHotelCategory create Exception", e);
+            throw new RuntimeException("DAOCategory create Exception", e);
         } finally {
             em.close();
         }
     }
 
     @Override
-    public HotelCategory read(HotelCategory category) {
+    public Category read(Category category) {
         EntityManager em = DataProvider.getEntityManager();
         try {
             em.getTransaction().begin();
-            HotelCategory hc = em.find(HotelCategory.class, category.getId());
+            Category hc = em.find(Category.class, category.getId());
             em.getTransaction().commit();
             return hc;
         } catch (Exception e) {
             em.getTransaction().rollback();
-            throw new RuntimeException("DAOHotelCategory read Exception", e);
+            throw new RuntimeException("DAOCategory read Exception", e);
         } finally {
             em.close();
         }
     }
 
     @Override
-    public void update(HotelCategory category) {
+    public void update(Category category) {
         EntityManager em = DataProvider.getEntityManager();
         try {
             em.getTransaction().begin();
-            HotelCategory hc = em.find(HotelCategory.class, category.getId());
+            Category hc = em.find(Category.class, category.getId());
             hc.setName(category.getName());
             em.getTransaction().commit();
         } catch (Exception e) {
             em.getTransaction().rollback();
-            throw new RuntimeException("DAOHotelCategory update Exception", e);
+            throw new RuntimeException("DAOCategory update Exception", e);
         } finally {
             em.close();
         }
     }
 
     @Override
-    public void delete(HotelCategory category) {
+    public void delete(Category category) {
         EntityManager em = DataProvider.getEntityManager();
         try {
             em.getTransaction().begin();
-            HotelCategory hc = em.find(HotelCategory.class, category.getId());
+            Category hc = em.find(Category.class, category.getId());
             em.remove(hc);
             em.getTransaction().commit();
         } catch (Exception e) {
             em.getTransaction().rollback();
-            throw new RuntimeException("DAOHotelCategory delete Exception", e);
+            throw new RuntimeException("DAOCategory delete Exception", e);
         } finally {
             em.close();
         }
     }
 
     @Override
-    public List<HotelCategory> getList() {
+    public List<Category> getList() {
         EntityManager em = DataProvider.getEntityManager();
         try {
             em.getTransaction().begin();
             CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<HotelCategory> criteria = cb.createQuery(HotelCategory.class);
-            Root<HotelCategory> root = criteria.from(HotelCategory.class);
+            CriteriaQuery<Category> criteria = cb.createQuery(Category.class);
+            Root<Category> root = criteria.from(Category.class);
             criteria.select(root);
-            List<HotelCategory> list = em.createQuery(criteria).getResultList();
+            List<Category> list = em.createQuery(criteria).getResultList();
             em.getTransaction().commit();
             return list;
         } catch (Exception e) {
             em.getTransaction().rollback();
-            throw new RuntimeException("DAOHotelCategory getList Exception", e);
+            throw new RuntimeException("DAOCategory getList Exception", e);
         } finally {
             em.close();
         }

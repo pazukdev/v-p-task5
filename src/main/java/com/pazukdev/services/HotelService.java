@@ -1,4 +1,8 @@
-package com.pazukdev;
+package com.pazukdev.services;
+
+import com.pazukdev.dao.DAOHotel;
+import com.pazukdev.entities.Category;
+import com.pazukdev.entities.Hotel;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -118,7 +122,7 @@ public class HotelService {
 
 
 	public void ensureTestData() {
-		List<HotelCategory> categoriesList = CategoryService.getInstance().findAll();
+		List<Category> categoriesList = CategoryService.getInstance().findAll();
 		if (findAll().isEmpty()) {
 			final String[] hotelData = new String[] {
 					"3 Nagas Luang Prabang - MGallery by Sofitel;4;https://www.booking.com/hotel/la/3-nagas-luang-prabang-by-accor.en-gb.html;Vat Nong Village, Sakkaline Road, Democratic Republic Lao, 06000 Luang Prabang, Laos;",

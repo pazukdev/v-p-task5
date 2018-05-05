@@ -1,18 +1,22 @@
-package com.pazukdev;
+package com.pazukdev.ui;
 
+import com.pazukdev.converters.CategoryToCategoryIDConverter;
+import com.pazukdev.converters.LocalDateToDaysConverter;
+import com.pazukdev.entities.Category;
+import com.pazukdev.entities.Hotel;
+import com.pazukdev.services.CategoryService;
+import com.pazukdev.services.HotelService;
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationException;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.event.ShortcutAction;
-import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 
 public class HotelEditForm extends FormLayout {
@@ -21,7 +25,7 @@ public class HotelEditForm extends FormLayout {
     private TextField address = new TextField("Address");
     private TextField rating = new TextField("Rating");
     private DateField operatesFrom = new DateField("Operates from");
-    private NativeSelect<HotelCategory> category = new NativeSelect<>("HotelCategory");
+    private NativeSelect<Category> category = new NativeSelect<>("Category");
     private TextArea description = new TextArea("Description");
     private TextField url = new TextField("URL");
 
@@ -69,8 +73,8 @@ public class HotelEditForm extends FormLayout {
         inputLengthLimit =255;
 
         // Category
-        List<HotelCategory> categories = new ArrayList<>();
-        for (HotelCategory category : categoryService.findAll()) {
+        List<Category> categories = new ArrayList<>();
+        for (Category category : categoryService.findAll()) {
             categories.add(category);
         }
         //category.setItemCaptionGenerator(i -> categoryService.findById(i.longValue()).getName());

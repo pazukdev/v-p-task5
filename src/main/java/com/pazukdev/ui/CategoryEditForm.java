@@ -1,9 +1,10 @@
-package com.pazukdev;
+package com.pazukdev.ui;
 
+import com.pazukdev.entities.Category;
+import com.pazukdev.services.CategoryService;
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationException;
 import com.vaadin.event.ShortcutAction;
-import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -18,11 +19,11 @@ public class CategoryEditForm extends FormLayout {
 
     private CategoryService categoryService = CategoryService.getInstance();
 
-    private HotelCategory category;
+    private Category category;
     private CategoryForm categoryForm;
 
 
-    private Binder<HotelCategory> binder = new Binder<>(HotelCategory.class);
+    private Binder<Category> binder = new Binder<>(Category.class);
 
 
 
@@ -34,13 +35,13 @@ public class CategoryEditForm extends FormLayout {
         setLayoutsSettings();
         setComponentsSize();
 
-        name.setDescription("HotelCategory name. Max length: 255 characters");
+        name.setDescription("Category name. Max length: 255 characters");
 
         binder.forField(name)
                 .asRequired("The field shouldn't be empty")
                 .withNullRepresentation("")
                 .withValidator(value -> value.length()<=255, "Length limit is exceeded")
-                .bind(HotelCategory:: getName, HotelCategory:: setName);
+                .bind(Category:: getName, Category:: setName);
 
         addComponents(name, buttons);
     }
@@ -74,7 +75,7 @@ public class CategoryEditForm extends FormLayout {
     }
 
 
-    public void editCategory(HotelCategory category) {
+    public void editCategory(Category category) {
         this.category = category;
         binder.readBean(category);
         binder.addStatusChangeListener(event -> {

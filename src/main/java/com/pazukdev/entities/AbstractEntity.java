@@ -1,4 +1,4 @@
-package com.pazukdev;
+package com.pazukdev.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;

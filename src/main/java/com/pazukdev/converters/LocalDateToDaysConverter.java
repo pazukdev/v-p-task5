@@ -1,4 +1,4 @@
-package com.pazukdev;
+package com.pazukdev.converters;
 
 import com.vaadin.data.Converter;
 import com.vaadin.data.Result;

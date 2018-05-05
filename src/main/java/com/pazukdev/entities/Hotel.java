@@ -1,10 +1,11 @@
-package com.pazukdev;
+package com.pazukdev.entities;
 
 
+
+import org.hibernate.annotations.OptimisticLockType;
+import org.hibernate.annotations.OptimisticLocking;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.time.LocalDate;
 
 
 @SuppressWarnings("serial")
