@@ -13,8 +13,6 @@ public class CategoryService {
 
     private final HashMap<Long, Category> categories = new HashMap<>();
     private com.pazukdev.dao.DAOCategory DAOCategory = new DAOCategory();
-    //private static Category nullCategory=new Category();
-
 
     private CategoryService() {}
 
@@ -22,21 +20,25 @@ public class CategoryService {
     public static CategoryService getInstance() {
         if (instance == null) {
             instance = new CategoryService();
-            //instance.ensureTestData();
+            instance.ensureTestData();
         }
         return instance;
     }
-
-
-    /*public static Category getNullCategory() {
-        return nullCategory;
-    }*/
 
 
     public synchronized List<Category> findAll() {
         List<Category> list = DAOCategory.getList();
         sortList(list);
         return list;
+    }
+
+    public synchronized List<String> findAllCategoryNames() {
+        List<Category> list = findAll();
+        List<String> categoryNames = new ArrayList<>();
+        for(Category category : list) {
+            categoryNames.add(category.getName());
+        }
+        return categoryNames;
     }
 
 
@@ -55,7 +57,8 @@ public class CategoryService {
         Collections.sort(list, new Comparator<Category>() {
             @Override
             public int compare(Category o1, Category o2) {
-                return (int) (o1.getId() - o2.getId());
+                //return (int) (o1.getId() - o2.getId());
+                return o1.getName().compareToIgnoreCase(o2.getName());
             }
         });
     }
@@ -86,8 +89,6 @@ public class CategoryService {
 
 
     public void ensureTestData() {
-        //nullCategory.setName("No category");
-
         if (findAll().isEmpty()) {
             final String[] categoryData = new String[] {
                     "Hotel", "Hostel", "GuestHouse", "Apartments"

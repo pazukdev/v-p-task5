@@ -5,6 +5,7 @@ import com.pazukdev.services.CategoryService;
 import com.vaadin.navigator.View;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 
 import java.util.List;
 
@@ -62,6 +63,7 @@ public class CategoryForm extends FormLayout implements View {
 
     private void setButtons() {
         //Add button
+        addCategory.setStyleName(ValoTheme.BUTTON_FRIENDLY);
         addCategory.addClickListener(event -> {
             categoryGrid.asMultiSelect().clear();
             categoryEditForm.editCategory(new Category());
@@ -92,6 +94,7 @@ public class CategoryForm extends FormLayout implements View {
         if(categoryEditForm.isVisible()) {
             categoryEditForm.setVisible(false);
         }
+        addCategory.setEnabled(selectedRowsNumber == 0);
         editCategory.setEnabled(selectedRowsNumber == 1);
         deleteCategory.setEnabled(selectedRowsNumber > 0);
     }

@@ -12,10 +12,10 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.renderers.HtmlRenderer;
-
+import com.vaadin.ui.themes.ValoTheme;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
 
 
 @Theme("mytheme")
@@ -34,10 +34,10 @@ public class HotelForm extends FormLayout implements View {
     private Button addHotel= new Button("Add hotel");
     private Button deleteHotel = new Button("Delete hotel");
     private Button editHotel = new Button("Edit hotel");
+    Button bulkUpdate = new Button("Bulk Update");
 
-    private HotelEditForm hotelEditForm = new HotelEditForm(this);
-
-    private String hotelToolbarElementsWidth;
+    private HotelEditForm hotelEditForm;
+    private PopupView popupView;
 
 
     public HotelForm() {
@@ -45,7 +45,8 @@ public class HotelForm extends FormLayout implements View {
         setGrid();
         setFilters();
         setButtons();
-        setLayouts();
+        setLayoutsAndForms();
+        setComponentsSize();
 
         updateHotelList();
 
@@ -56,7 +57,7 @@ public class HotelForm extends FormLayout implements View {
     private void setGrid() {
         hotelGrid.setSelectionMode(Grid.SelectionMode.MULTI);
         hotelGrid.setWidth("1000px");
-        hotelGrid.setHeight("516px");
+        hotelGrid.setHeight("524px");
         hotelGrid.setBodyRowHeight(30);
         hotelGrid.getColumn("name").setMaximumWidth(260);
         hotelGrid.sort(hotelGrid.getColumn("name"), SortDirection.ASCENDING);
@@ -81,7 +82,7 @@ public class HotelForm extends FormLayout implements View {
         }).setCaption("Operates from");
 
         Grid.Column<Hotel, String> categoryColumn = hotelGrid.addColumn(hotel -> {
-            Category category = categoryService.findById(hotel.getCategory());
+            Category category = categoryService.findById(hotel.getCategoryId());
             if (category != null) {
                 return category.getName();
             }
@@ -103,53 +104,67 @@ public class HotelForm extends FormLayout implements View {
         filterByName.setPlaceholder("filter by name");
         filterByName.addValueChangeListener(e -> updateHotelList());
         filterByName.setValueChangeMode(ValueChangeMode.LAZY);
-        filterByName.setWidth(hotelToolbarElementsWidth);
 
         // Filter by address
         filterByAddress.setPlaceholder("filter by address");
         filterByAddress.addValueChangeListener(e -> updateHotelList());
         filterByAddress.setValueChangeMode(ValueChangeMode.LAZY);
-        filterByAddress.setWidth(hotelToolbarElementsWidth);
-
     }
 
 
-    private void setLayouts() {
+    private void setLayoutsAndForms() {
         // Toolbar
         hotelToolbar = new HorizontalLayout(filterByName, filterByAddress, addHotel,
-                deleteHotel, editHotel);
-        hotelToolbarElementsWidth = "190px";
+                deleteHotel, editHotel, bulkUpdate);
 
         // Hotel edit form
+        hotelEditForm = new HotelEditForm(this);
         hotelEditForm.setVisible(false);
+
+        // Popup
+        popupView = BulkUpdateForm.getInstance(this);
+        popupView.addPopupVisibilityListener(event -> {
+            deleteHotel.setEnabled(!popupView.isPopupVisible());
+            bulkUpdate.setEnabled(!popupView.isPopupVisible());
+        });
 
         // Main layout
         hotelMainLayout = new HorizontalLayout();
-        hotelMainLayout.addComponents(hotelGrid, hotelEditForm);
+        hotelMainLayout.addComponents(hotelGrid, hotelEditForm, popupView);
     }
 
 
     private void setButtons() {
         //Add button
-        addHotel.setWidth(hotelToolbarElementsWidth);
+        addHotel.setStyleName(ValoTheme.BUTTON_FRIENDLY);
         addHotel.addClickListener(event -> {
-            hotelGrid.asMultiSelect().clear();
+            //hotelGrid.asMultiSelect().clear();
             if(hotelEditForm.isVisible()) hotelEditForm.setVisible(false);
-            LocalDate yesterday=LocalDate.now().minusDays(1L);
+            //LocalDate yesterday=LocalDate.now().minusDays(1L);
             hotelEditForm.editHotel(new Hotel());
         });
 
         // Delete button
-        editHotel.setWidth(hotelToolbarElementsWidth);
         deleteHotel.setEnabled(false);
         deleteHotel.addClickListener(event -> deleteSelected());
 
         // Edit button
-        deleteHotel.setWidth(hotelToolbarElementsWidth);
         editHotel.setEnabled(false);
-        editHotel.addClickListener(event -> {
-            hotelEditForm.editHotel(hotelGrid.getSelectedItems().iterator().next());
-        });
+        editHotel.addClickListener(event -> hotelEditForm.editHotel(hotelGrid.getSelectedItems().iterator().next()));
+
+        // Bulk Update button
+        bulkUpdate.setEnabled(false);
+        bulkUpdate.addClickListener(event -> popupView.setPopupVisible(true));
+    }
+
+    private void setComponentsSize() {
+        String toolBarButtonsSize = "142px";
+
+        // Toolbar buttons
+        addHotel.setWidth(toolBarButtonsSize);
+        deleteHotel.setWidth(toolBarButtonsSize);
+        editHotel.setWidth(toolBarButtonsSize);
+        bulkUpdate.setWidth(toolBarButtonsSize);
     }
 
 
@@ -161,13 +176,21 @@ public class HotelForm extends FormLayout implements View {
     }
 
 
+    public List<Hotel> getSelected() {
+        return new ArrayList<>(hotelGrid.getSelectedItems());
+    }
+
+
     private void selectionCheck() {
         int selectedRowsNumber = hotelGrid.getSelectedItems().size();
-        if(hotelEditForm.isVisible()) {
+        if(hotelEditForm.isVisible() || popupView.isPopupVisible()) {
             hotelEditForm.setVisible(false);
+            popupView.setVisible(false);
         }
+        addHotel.setEnabled(selectedRowsNumber == 0);
         editHotel.setEnabled(selectedRowsNumber == 1);
         deleteHotel.setEnabled(selectedRowsNumber > 0);
+        bulkUpdate.setEnabled(selectedRowsNumber > 1);
     }
 
 

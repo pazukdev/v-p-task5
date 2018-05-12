@@ -2,9 +2,6 @@ package com.pazukdev.entities;
 
 
 
-import org.hibernate.annotations.OptimisticLockType;
-import org.hibernate.annotations.OptimisticLocking;
-
 import javax.persistence.*;
 
 
@@ -26,7 +23,7 @@ public class Hotel extends AbstractEntity {
 	private Long operatesFromDay;
 
     @Column(name = "CATEGORY")
-    private Long categoryID;
+    private Long categoryId;
 
 	@Column(name="URL")
 	private String url="http://";
@@ -82,11 +79,11 @@ public class Hotel extends AbstractEntity {
     }
 
 
-	public Long getCategory() {
-		return categoryID;
+	public Long getCategoryId() {
+		return categoryId;
 	}
-	public void setCategory(Long categoryID) {
-	    this.categoryID = categoryID;
+	public void setCategoryId(Long categoryId) {
+	    this.categoryId = categoryId;
 	}
 
 

@@ -6,6 +6,7 @@
         <setting name="validation-enabled" value="true" />
         <setting name="provider-name" value="Hibernate" />
         <datasource-mapping>
+          <factory-entry name="demo_hotels" value="df4f0398-8a4b-41ac-aecb-487493ec5a0b" />
           <factory-entry name="hotels.jpa.hibernate" value="61ea27ec-a945-4b25-a9a4-4a94e0343cdf" />
         </datasource-mapping>
         <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/src/main/resources/META-INF/persistence.xml" />

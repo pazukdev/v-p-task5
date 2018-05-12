@@ -29,7 +29,7 @@ public class HotelService {
 	public static HotelService getInstance() {
 		if (instance == null) {
 			instance = new HotelService();
-			//instance.ensureTestData();
+			instance.ensureTestData();
 		}
 		return instance;
 	}
@@ -38,20 +38,6 @@ public class HotelService {
 	public synchronized List<Hotel> findAll() {
 		return findByNameAndAddress(null, null);
 	}
-
-    /*public synchronized List<Hotel> findByCategory(Integer categoryID) {
-        List<Hotel> list = daoHotel.getList();
-        for (int i = 0; i < list.size();) {
-            Hotel hotel = list.get(i);
-            if (hotel.getCategoryID() == categoryID) {
-                i++;
-                continue;
-            }
-            list.remove(i);
-        }
-        sortList(list);
-        return list;
-    }*/
 
 
 	public synchronized List<Hotel> findByNameAndAddress(String name, String address) {
@@ -157,7 +143,7 @@ public class HotelService {
 				h.setRating(Integer.parseInt(split[1]));
 				h.setUrl(split[2]);
 				h.setAddress(split[3]);
-				//h.setCategoryID(categoriesList.get(r.nextInt(categoriesList.size())).getId());
+				h.setCategoryId(categoriesList.get(r.nextInt(categoriesList.size())).getId());
 				long daysOld = r.nextInt(365 * 30);
 				h.setOperatesFromDay(LocalDate.now().minusDays(daysOld).toEpochDay());
 				h.setDescription(getHotelDescription());
