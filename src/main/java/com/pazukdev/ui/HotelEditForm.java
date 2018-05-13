@@ -21,9 +21,6 @@ import java.util.List;
 
 public class HotelEditForm extends AbstractForm {
 
-    private Hotel hotel;
-    //private FormLayout formLayout;
-
 
     public HotelEditForm(HotelForm hotelForm) {
         super(hotelForm);
@@ -47,9 +44,8 @@ public class HotelEditForm extends AbstractForm {
         // Update button
         updateButton.setCaption("Save");
         updateButton.addClickListener(event -> {
-            save();
+            saveHotel(hotel);
             hotelForm.updateHotelList();
-            binder.removeBean();
             setVisible(false);
         });
 
@@ -78,21 +74,5 @@ public class HotelEditForm extends AbstractForm {
         setVisible(true);
         name.selectAll();
     }
-
-
-    private void save() {
-        try {
-            binder.writeBean(hotel);
-        } catch (ValidationException e) {
-            e.printStackTrace();
-        }
-        hotelService.save(hotel);
-
-        hotelForm.updateHotelList();
-        setVisible(false);
-    }
-
-
-
 
 }

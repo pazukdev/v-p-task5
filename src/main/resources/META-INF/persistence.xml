@@ -9,8 +9,8 @@
             <property name="hibernate.connection.username" value="demo"/>
             <property name="hibernate.connection.password" value="D1e2m3o4O1E3AE!3"/>
             <property name="hibernate.archive.autodetection" value="class"/>
-            <property name="hibernate.show_sql" value="true"/>
-            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.format_sql" value="false"/>
             <property name="hbm2ddl.auto" value="update"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
         </properties>

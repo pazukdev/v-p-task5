@@ -138,9 +138,7 @@ public class HotelForm extends FormLayout implements View {
         //Add button
         addHotel.setStyleName(ValoTheme.BUTTON_FRIENDLY);
         addHotel.addClickListener(event -> {
-            //hotelGrid.asMultiSelect().clear();
             if(hotelEditForm.isVisible()) hotelEditForm.setVisible(false);
-            //LocalDate yesterday=LocalDate.now().minusDays(1L);
             hotelEditForm.editHotel(new Hotel());
         });
 
@@ -150,7 +148,7 @@ public class HotelForm extends FormLayout implements View {
 
         // Edit button
         editHotel.setEnabled(false);
-        editHotel.addClickListener(event -> hotelEditForm.editHotel(hotelGrid.getSelectedItems().iterator().next()));
+        editHotel.addClickListener(event -> hotelEditForm.editHotel(getSelected().get(0)));
 
         // Bulk Update button
         bulkUpdate.setEnabled(false);
@@ -183,10 +181,6 @@ public class HotelForm extends FormLayout implements View {
 
     private void selectionCheck() {
         int selectedRowsNumber = hotelGrid.getSelectedItems().size();
-        if(hotelEditForm.isVisible() || popupView.isPopupVisible()) {
-            hotelEditForm.setVisible(false);
-            popupView.setVisible(false);
-        }
         addHotel.setEnabled(selectedRowsNumber == 0);
         editHotel.setEnabled(selectedRowsNumber == 1);
         deleteHotel.setEnabled(selectedRowsNumber > 0);

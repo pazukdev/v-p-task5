@@ -20,6 +20,8 @@ import java.util.*;
 
 public abstract class AbstractForm extends FormLayout {
 
+    Hotel hotel;
+
     protected HotelForm hotelForm;
     protected HotelService hotelService = HotelService.getInstance();
     protected CategoryService categoryService =CategoryService.getInstance();
@@ -201,7 +203,17 @@ public abstract class AbstractForm extends FormLayout {
     }
 
 
-    protected void saveChanges() {
+    protected void saveHotel(Hotel hotel) {
+        try {
+            binder.writeBean(hotel);
+        } catch (ValidationException e) {
+            e.printStackTrace();
+        }
+        hotelService.save(hotel);
+    }
+
+
+    protected void saveAllHotels() {
         for (Hotel h : hotelForm.getSelected()) {
             try {
                 binder.writeBean(h);

@@ -81,7 +81,7 @@ public class BulkUpdateForm extends AbstractForm {
 
         // Update button
         updateButton.addClickListener(event -> {
-            saveChanges();
+            saveAllHotels();
             instance.setPopupVisible(false);
             hotelForm.updateHotelList();
         });
@@ -108,7 +108,6 @@ public class BulkUpdateForm extends AbstractForm {
         String buttonsWidth = "100px";
         updateButton.setWidth(buttonsWidth);
         cancelButton.setWidth(buttonsWidth);
-
     }
 
 
