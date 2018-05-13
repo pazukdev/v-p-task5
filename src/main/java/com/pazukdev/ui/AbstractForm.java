@@ -110,13 +110,13 @@ public abstract class AbstractForm extends FormLayout {
         Field url = null;
         Field description = null;
         try {
-            name = c.getField("name");
-            address = c.getField("address");
-            rating = c.getField("rating");
-            operatesFromDay = c.getField("operatesFromDay");
-            categoryId = c.getField("categoryId");
-            url = c.getField("url");
-            description = c.getField("description");
+            name = c.getDeclaredField("name");
+            address = c.getDeclaredField("address");
+            rating = c.getDeclaredField("rating");
+            operatesFromDay = c.getDeclaredField("operatesFromDay");
+            categoryId = c.getDeclaredField("categoryId");
+            url = c.getDeclaredField("url");
+            description = c.getDeclaredField("description");
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
