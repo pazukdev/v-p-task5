@@ -1,11 +1,10 @@
 package com.pazukdev.ui;
 
 import com.pazukdev.entities.Category;
+import com.pazukdev.entities.Hotel;
 import com.vaadin.ui.*;
 
 public class BulkUpdateForm extends AbstractForm {
-
-    VerticalLayout verticalLayout = new VerticalLayout();
 
     private static PopupView instance;
 
@@ -17,9 +16,8 @@ public class BulkUpdateForm extends AbstractForm {
 
         Label label = new Label(hotelForm.bulkUpdate.getCaption());
 
-        verticalLayout.addComponents(label, fieldSelect, categorySelect, name, address, rating, url,
+        addComponents(label, fieldSelect, categorySelect, name, address, rating, url,
                 description, operatesFromDay, buttonBar);
-        addComponents(verticalLayout);
     }
 
 
@@ -55,8 +53,8 @@ public class BulkUpdateForm extends AbstractForm {
 
 
     @Override
-    protected void setFields() {
-        super.setFields();
+    protected void setFields(String entityClassName) {
+        super.setFields(Hotel.class.getName());
 
         name.setCaption(null);
         name.setVisible(false);
@@ -132,7 +130,7 @@ public class BulkUpdateForm extends AbstractForm {
 
             if(fieldSelect.getValue() != null) {
                 if(fieldSelect.getValue().equals(super.nameKey)) {
-                    setBinderForField(super.nameKey, true);
+                    setBinderForField(Hotel.class.getName(), super.nameKey, true);
 
                     if(allFieldValuesAreEquals(nameKey)) {
                         binder.readBean(hotelForm.getSelected().get(0));
@@ -142,7 +140,7 @@ public class BulkUpdateForm extends AbstractForm {
                 }
 
                 if(fieldSelect.getValue().equals(addressKey)) {
-                    setBinderForField(super.addressKey, true);
+                    setBinderForField(Hotel.class.getName(), super.addressKey, true);
 
                     if(allFieldValuesAreEquals(fieldSelect.getValue())) {
                         binder.readBean(hotelForm.getSelected().get(0));
@@ -152,7 +150,7 @@ public class BulkUpdateForm extends AbstractForm {
                 }
 
                 if(fieldSelect.getValue().equals(ratingKey)) {
-                    setBinderForField(ratingKey, true);
+                    setBinderForField(Hotel.class.getName(), ratingKey, true);
 
                     if(allFieldValuesAreEquals(fieldSelect.getValue())) {
                         binder.readBean(hotelForm.getSelected().get(0));
@@ -162,7 +160,7 @@ public class BulkUpdateForm extends AbstractForm {
                 }
 
                 if(fieldSelect.getValue().equals(operatesFromDayKey)) {
-                    setBinderForField(operatesFromDayKey, true);
+                    setBinderForField(Hotel.class.getName(), operatesFromDayKey, true);
 
                     if(allFieldValuesAreEquals(fieldSelect.getValue())) {
                         binder.readBean(hotelForm.getSelected().get(0));
@@ -171,7 +169,7 @@ public class BulkUpdateForm extends AbstractForm {
                 }
 
                 if(fieldSelect.getValue().equals(categoryIdKey)) {
-                    setBinderForField(categoryIdKey, true);
+                    setBinderForField(Hotel.class.getName(), categoryIdKey, true);
 
                     if(allFieldValuesAreEquals(fieldSelect.getValue())) {
                         binder.readBean(hotelForm.getSelected().get(0));
@@ -180,7 +178,7 @@ public class BulkUpdateForm extends AbstractForm {
                 }
 
                 if(fieldSelect.getValue().equals(urlKey)) {
-                    setBinderForField(urlKey, true);
+                    setBinderForField(Hotel.class.getName(), urlKey, true);
 
                     if(allFieldValuesAreEquals(fieldSelect.getValue())) {
                         binder.readBean(hotelForm.getSelected().get(0));
@@ -192,7 +190,7 @@ public class BulkUpdateForm extends AbstractForm {
                 }
 
                 if(fieldSelect.getValue().equals(descriptionKey)) {
-                    setBinderForField(descriptionKey, true);
+                    setBinderForField(Hotel.class.getName(), descriptionKey, true);
 
                     if(allFieldValuesAreEquals(fieldSelect.getValue())) {
                         binder.readBean(hotelForm.getSelected().get(0));

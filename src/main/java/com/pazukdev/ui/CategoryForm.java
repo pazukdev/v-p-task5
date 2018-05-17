@@ -34,6 +34,7 @@ public class CategoryForm extends FormLayout implements View {
         updateCategoryList();
 
         addComponents(categoryToolbar, categoryMainLayout);
+        setMargin(false);
     }
 
 

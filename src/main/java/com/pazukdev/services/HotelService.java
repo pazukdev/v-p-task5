@@ -135,7 +135,7 @@ public class HotelService {
 					"Phakchai Hotel;2;https://www.booking.com/hotel/la/phakchai.en-gb.html;137 Ban Wattay Mueng Sikothabong Vientiane Laos, 01000 Vientiane, Laos",
 					"Phetmeuangsam Hotel;2;https://www.booking.com/hotel/la/phetmisay.en-gb.html;Ban Phanhxai, Xumnuea, Xam Nua, 01000 Xam Nua, Laos" };
 
-			Random r = new Random(0);
+			Random random = new Random(0);
 			for (String hotel : hotelData) {
 				String[] split = hotel.split(";");
 				Hotel h = new Hotel();
@@ -143,8 +143,8 @@ public class HotelService {
 				h.setRating(Integer.parseInt(split[1]));
 				h.setUrl(split[2]);
 				h.setAddress(split[3]);
-				h.setCategoryId(categoriesList.get(r.nextInt(categoriesList.size())).getId());
-				long daysOld = r.nextInt(365 * 30);
+				h.setCategoryId(categoriesList.get(random.nextInt(categoriesList.size())).getId());
+				long daysOld = random.nextInt(365 * 30);
 				h.setOperatesFromDay(LocalDate.now().minusDays(daysOld).toEpochDay());
 				h.setDescription(getHotelDescription());
 				save(h);

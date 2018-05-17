@@ -4,7 +4,6 @@ import com.pazukdev.entities.Category;
 import com.pazukdev.entities.Hotel;
 import com.pazukdev.services.CategoryService;
 import com.pazukdev.services.HotelService;
-import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.shared.ui.ValueChangeMode;
@@ -18,7 +17,6 @@ import java.time.LocalDate;
 import java.util.*;
 
 
-@Theme("mytheme")
 public class HotelForm extends FormLayout implements View {
     private HotelService hotelService = HotelService.getInstance();
     private CategoryService categoryService = CategoryService.getInstance();
@@ -51,14 +49,15 @@ public class HotelForm extends FormLayout implements View {
         updateHotelList();
 
         addComponents(hotelToolbar, hotelMainLayout);
+        setMargin(false);
     }
 
 
     private void setGrid() {
         hotelGrid.setSelectionMode(Grid.SelectionMode.MULTI);
         hotelGrid.setWidth("1000px");
-        hotelGrid.setHeight("524px");
-        hotelGrid.setBodyRowHeight(30);
+        hotelGrid.setHeight("486px");
+        hotelGrid.setBodyRowHeight(34);
         hotelGrid.getColumn("name").setMaximumWidth(260);
         hotelGrid.sort(hotelGrid.getColumn("name"), SortDirection.ASCENDING);
         hotelGrid.getColumn("address").setMaximumWidth(260);
@@ -101,12 +100,12 @@ public class HotelForm extends FormLayout implements View {
 
     private void setFilters() {
         // Filter by name
-        filterByName.setPlaceholder("filter by name");
+        filterByName.setPlaceholder("Filter by name");
         filterByName.addValueChangeListener(e -> updateHotelList());
         filterByName.setValueChangeMode(ValueChangeMode.LAZY);
 
         // Filter by address
-        filterByAddress.setPlaceholder("filter by address");
+        filterByAddress.setPlaceholder("Filter by address");
         filterByAddress.addValueChangeListener(e -> updateHotelList());
         filterByAddress.setValueChangeMode(ValueChangeMode.LAZY);
     }

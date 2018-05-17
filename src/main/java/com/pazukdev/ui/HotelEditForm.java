@@ -21,11 +21,14 @@ import java.util.List;
 
 public class HotelEditForm extends AbstractForm {
 
+    FormLayout formLayout = new FormLayout();
 
     public HotelEditForm(HotelForm hotelForm) {
         super(hotelForm);
-
-        addComponents(name, address, rating, operatesFromDay, categorySelect, description, url, buttonBar);
+        formLayout.addComponents(name, address, rating, operatesFromDay, categorySelect, description, url, buttonBar);
+        formLayout.setMargin(false);
+        addComponents(formLayout);
+        setMargin(false);
     }
 
 
@@ -57,13 +60,13 @@ public class HotelEditForm extends AbstractForm {
 
     @Override
     protected void selectField() {
-        setBinderForField(nameKey, true);
-        setBinderForField(addressKey, false);
-        setBinderForField(ratingKey, false);
-        setBinderForField(categoryIdKey, false);
-        setBinderForField(operatesFromDayKey, false);
-        setBinderForField(urlKey, false);
-        setBinderForField(descriptionKey, false);
+        setBinderForField(Hotel.class.getName(), nameKey, true);
+        setBinderForField(Hotel.class.getName(), addressKey, false);
+        setBinderForField(Hotel.class.getName(), ratingKey, false);
+        setBinderForField(Hotel.class.getName(), categoryIdKey, false);
+        setBinderForField(Hotel.class.getName(), operatesFromDayKey, false);
+        setBinderForField(Hotel.class.getName(), urlKey, false);
+        setBinderForField(Hotel.class.getName(), descriptionKey, false);
     }
 
 

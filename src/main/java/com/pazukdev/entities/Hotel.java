@@ -102,5 +102,4 @@ public class Hotel extends AbstractEntity {
 		this.description=description;
 	}
 
-
 }

@@ -10,6 +10,7 @@ import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationException;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.validator.RegexpValidator;
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -18,30 +19,39 @@ import java.time.LocalDate;
 import java.util.*;
 
 
-public abstract class AbstractForm extends FormLayout {
+public abstract class AbstractForm extends VerticalLayout {
 
-    Hotel hotel;
+    protected Hotel hotel;
+    protected Category category;
 
     protected HotelForm hotelForm;
+    protected CategoryForm categoryForm;
+
     protected HotelService hotelService = HotelService.getInstance();
     protected CategoryService categoryService =CategoryService.getInstance();
 
     protected NativeSelect<String> fieldSelect;
     protected NativeSelect<Category> categorySelect;
 
+    // Fields for Hotel class
     protected TextField name;
     protected TextField address;
     protected TextField rating;
-    protected TextArea description;
     protected TextField url;
 
     protected DateField operatesFromDay;
+
+    protected TextArea description;
+
+    // Fields for Category class
+    protected TextField categoryName;
 
     protected Button updateButton;
     protected Button cancelButton;
     HorizontalLayout buttonBar;
 
     protected Binder<Hotel> binder;
+    protected Binder<Category> categoryBinder;
 
     protected List<TextField> textFieldsList;
 
@@ -55,6 +65,8 @@ public abstract class AbstractForm extends FormLayout {
     protected String urlKey = "URL";
     protected String descriptionKey = "Description";
 
+    protected String categoryNameKey = "Category name";
+
 
     protected AbstractForm() {}
 
@@ -62,7 +74,7 @@ public abstract class AbstractForm extends FormLayout {
         this.hotelForm = hotelForm;
 
         // Components init and settings
-        setFields();
+        setFields(Hotel.class.getName());
         setDescriptions();
         setPlaceholders();
         setButtons();
@@ -71,6 +83,23 @@ public abstract class AbstractForm extends FormLayout {
         setTextFieldsList();
 
         buttonBar = new HorizontalLayout(updateButton, cancelButton);
+
+        setMargin(false);
+    }
+
+
+    protected AbstractForm(CategoryForm categoryForm) {
+        this.categoryForm = categoryForm;
+
+        // Components init and settings
+        setFields(Category.class.getName());
+        setDescriptions();
+        setPlaceholders();
+        setButtons();
+
+        buttonBar = new HorizontalLayout(updateButton, cancelButton);
+
+        setComponentsSizes();
     }
 
 
@@ -98,44 +127,66 @@ public abstract class AbstractForm extends FormLayout {
     }
 
 
-    protected Map<String, Field> getClassFieldsMap() {
-        Hotel hotel = new Hotel();
-        Class c = hotel.getClass();
+    protected Map<String, Field> getClassFieldsMap(String entityClassName) {
+        if(entityClassName.equals(Hotel.class.getName())) {
+            Hotel hotel = new Hotel();
+            Class c = hotel.getClass();
 
-        Field name = null;
-        Field address = null;
-        Field rating = null;
-        Field operatesFromDay = null;
-        Field categoryId = null;
-        Field url = null;
-        Field description = null;
-        try {
-            name = c.getDeclaredField("name");
-            address = c.getDeclaredField("address");
-            rating = c.getDeclaredField("rating");
-            operatesFromDay = c.getDeclaredField("operatesFromDay");
-            categoryId = c.getDeclaredField("categoryId");
-            url = c.getDeclaredField("url");
-            description = c.getDeclaredField("description");
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+            Field name = null;
+            Field address = null;
+            Field rating = null;
+            Field operatesFromDay = null;
+            Field categoryId = null;
+            Field url = null;
+            Field description = null;
+            try {
+                name = c.getDeclaredField("name");
+                address = c.getDeclaredField("address");
+                rating = c.getDeclaredField("rating");
+                operatesFromDay = c.getDeclaredField("operatesFromDay");
+                categoryId = c.getDeclaredField("categoryId");
+                url = c.getDeclaredField("url");
+                description = c.getDeclaredField("description");
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+
+            Map<String, Field> classFieldsMap = new TreeMap<>();
+            classFieldsMap.put(nameKey, name);
+            classFieldsMap.put(addressKey, address);
+            classFieldsMap.put(ratingKey, rating);
+            classFieldsMap.put(operatesFromDayKey, operatesFromDay);
+            classFieldsMap.put(categoryIdKey, categoryId);
+            classFieldsMap.put(urlKey, url);
+            classFieldsMap.put(descriptionKey, description);
+
+            return classFieldsMap;
         }
 
-        Map<String, Field> classFieldsMap = new TreeMap<>();
-        classFieldsMap.put(nameKey, name);
-        classFieldsMap.put(addressKey, address);
-        classFieldsMap.put(ratingKey, rating);
-        classFieldsMap.put(operatesFromDayKey, operatesFromDay);
-        classFieldsMap.put(categoryIdKey, categoryId);
-        classFieldsMap.put(urlKey, url);
-        classFieldsMap.put(descriptionKey, description);
+        if(entityClassName.equals(Category.class.getName())) {
+            Category category = new Category();
+            Class c = category.getClass();
 
-        return classFieldsMap;
+            Field categoryName = null;
+            try {
+                categoryName = c.getDeclaredField("name");
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+
+            Map<String, Field> classFieldsMap = new TreeMap<>();
+            classFieldsMap.put(categoryNameKey, categoryName);
+
+            return classFieldsMap;
+        }
+
+        return null;
+
     }
 
 
-    protected NativeSelect<String> initFieldSelect() {
-        Map<String, Field> classFieldsMap = getClassFieldsMap();
+    protected NativeSelect<String> initFieldSelect(String entityClassName) {
+        Map<String, Field> classFieldsMap = getClassFieldsMap(entityClassName);
         NativeSelect<String> fieldSelect = new NativeSelect<>("Select field to edit");
         fieldSelect.setItems(classFieldsMap.keySet());
         return fieldSelect;
@@ -155,8 +206,8 @@ public abstract class AbstractForm extends FormLayout {
     }
 
 
-    protected void setFields() {
-        fieldSelect = initFieldSelect();
+    protected void setFields(String entityClassName) {
+        fieldSelect = initFieldSelect(entityClassName);
         categorySelect = initCategorySelect();
         operatesFromDay = initDateField();
 
@@ -165,20 +216,27 @@ public abstract class AbstractForm extends FormLayout {
         rating = new TextField(ratingKey);
         description = new TextArea(descriptionKey);
         url = new TextField(urlKey);
+
+        categoryName = new TextField(categoryNameKey);
     }
 
 
     protected void setPlaceholders() {
+        // For Hotel class forms
         name.setPlaceholder(nameKey);
         address.setPlaceholder(addressKey);
         rating.setPlaceholder(ratingKey);
         description.setPlaceholder(descriptionKey);
+
+        // For Category class forms
+        categoryName.setPlaceholder(categoryNameKey);
     }
 
 
     private void setDescriptions() {
         String maxLength = ". Max length: " + inputLengthLimit + " characters";
 
+        // For Hotel class forms
         fieldSelect.setDescription("Select field to edit");
         categorySelect.setDescription("Select hotel category");
 
@@ -189,6 +247,9 @@ public abstract class AbstractForm extends FormLayout {
         description.setDescription("Any additional info about hotel");
 
         operatesFromDay.setDescription("Hotel operates since");
+
+        // For Category class forms
+        categoryName.setDescription("Category name" + maxLength);
     }
 
 
@@ -197,9 +258,11 @@ public abstract class AbstractForm extends FormLayout {
         updateButton = new Button("Update");
         updateButton.setEnabled(false);
         updateButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
+        updateButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
         // Cancel button
         cancelButton = new Button("Cancel");
+        cancelButton.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
     }
 
 
@@ -222,6 +285,16 @@ public abstract class AbstractForm extends FormLayout {
             }
             hotelService.save(h);
         }
+    }
+
+
+    protected void saveCategory(Category category) {
+        try {
+            categoryBinder.writeBean(category);
+        } catch (ValidationException e) {
+            e.printStackTrace();
+        }
+        categoryService.save(category);
     }
 
 
@@ -276,10 +349,8 @@ public abstract class AbstractForm extends FormLayout {
     }
 
 
-    protected void setBinderForField(String fieldKey, boolean withNewBinder) {
-        String wrongLengthMessage = "Length limit is exceeded";
-
-        if(withNewBinder) {
+    private void setNewBinder(String entityClassName) {
+        if(entityClassName.equals(Hotel.class.getName())) {
             binder = new Binder<>(Hotel.class);
 
             binder.addStatusChangeListener(e -> {
@@ -289,11 +360,31 @@ public abstract class AbstractForm extends FormLayout {
             });
         }
 
+        if(entityClassName.equals(Category.class.getName())) {
+            categoryBinder = new Binder<>(Category.class);
+
+            categoryBinder.addStatusChangeListener(e -> {
+                boolean isValid = e.getBinder().isValid();
+                boolean hasChanges = e.getBinder().hasChanges();
+                updateButton.setEnabled(isValid && hasChanges);
+            });
+        }
+
+    }
+
+
+    protected void setBinderForField(String entityClassName, String fieldKey, boolean withNewBinder) {
+        String wrongLengthMessage = "Length limit is exceeded";
+
+        if(withNewBinder) {
+            setNewBinder(entityClassName);
+        }
+
         if(fieldKey.equals(nameKey)) {
             binder.forField(name)
                     .asRequired("The field shouldn't be empty")
                     .withNullRepresentation("")
-                    .withValidator(value -> value.length()<= inputLengthLimit, wrongLengthMessage)
+                    .withValidator(value -> value.length() <= inputLengthLimit, wrongLengthMessage)
                     .bind(Hotel:: getName, Hotel:: setName);
         }
 
@@ -301,7 +392,7 @@ public abstract class AbstractForm extends FormLayout {
             binder.forField(address)
                     .asRequired("The field shouldn't be empty")
                     .withNullRepresentation("")
-                    .withValidator(value -> value.length()<= inputLengthLimit, wrongLengthMessage)
+                    .withValidator(value -> value.length() <= inputLengthLimit, wrongLengthMessage)
                     .bind(Hotel:: getAddress, Hotel:: setAddress);
         }
 
@@ -310,7 +401,7 @@ public abstract class AbstractForm extends FormLayout {
                     .asRequired("The field shouldn't be empty")
                     .withNullRepresentation("")
                     .withConverter(new StringToIntegerConverter("Wrong input. Integer numbers only"))
-                    .withValidator(value -> value>=0 && value<=5, "Wrong value. Valid values from 0 to 5")
+                    .withValidator(value -> value >= 0 && value <= 5, "Wrong value. Valid values from 0 to 5")
                     .bind(Hotel:: getRating, Hotel:: setRating);
         }
 
@@ -334,16 +425,22 @@ public abstract class AbstractForm extends FormLayout {
                     .asRequired("The field shouldn't be empty")
                     .withNullRepresentation("")
                     .withValidator(new RegexpValidator("This is incorrect URL", urlRegex))
-                    .withValidator(value -> value.length()<= inputLengthLimit, wrongLengthMessage)
+                    .withValidator(value -> value.length() <= inputLengthLimit, wrongLengthMessage)
                     .bind(Hotel:: getUrl, Hotel:: setUrl);
-
         }
 
         if(fieldKey.equals(descriptionKey)) {
             binder.forField(description)
                     .withNullRepresentation("")
                     .bind(Hotel::getDescription, Hotel::setDescription);
+        }
 
+        if(fieldKey.equals(categoryNameKey)) {
+            categoryBinder.forField(categoryName)
+                    .asRequired("The field shouldn't be empty")
+                    .withNullRepresentation("")
+                    .withValidator(value -> value.length() <= inputLengthLimit, wrongLengthMessage)
+                    .bind(Category:: getName, Category:: setName);
         }
 
     }

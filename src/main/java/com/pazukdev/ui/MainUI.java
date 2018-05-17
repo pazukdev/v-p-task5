@@ -4,9 +4,11 @@ import javax.servlet.annotation.WebListener;
 import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.annotations.Theme;
+import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.EnableVaadin;
 import com.vaadin.spring.annotation.SpringUI;
@@ -17,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.ContextLoaderListener;
 
 @Theme("mytheme")
+@Title("Hotels")
 @SuppressWarnings("serial")
 @SpringUI
 public class MainUI extends UI {
@@ -38,6 +41,7 @@ public class MainUI extends UI {
     protected void init(VaadinRequest vaadinRequest) {
         VerticalLayout layout = new VerticalLayout();
         layout.setSizeFull();
+
         setContent(layout);
 
         HorizontalLayout content = new HorizontalLayout();
@@ -56,6 +60,8 @@ public class MainUI extends UI {
                 navigator.addView("Hotel", new HotelForm());
                 navigator.navigateTo("Hotel");
 
+                Page.getCurrent().setTitle("Hotels");
+
                 hotelItem.setEnabled(false);
                 categoryItem.setEnabled(true);
 
@@ -69,6 +75,8 @@ public class MainUI extends UI {
                 navigator.removeView("Category");
                 navigator.addView("Category", new CategoryForm());
                 navigator.navigateTo("Category");
+
+                Page.getCurrent().setTitle("Hotel category");
 
                 categoryItem.setEnabled(false);
                 hotelItem.setEnabled(true);

@@ -35,6 +35,7 @@
 		</rollback>
 	</changeSet>
 
+
 	<changeSet id="HOTEL_UPDATE" author="sviarkaltsau">
 		<addColumn tableName="HOTEL">
 			<column name="DESCRIPTION" type="TEXT" />
@@ -43,6 +44,7 @@
 			<dropColumn tableName="HOTEL" columnName="DESCRIPTION" />
 		</rollback>
 	</changeSet>
+
 
 	<changeSet id="CATEGORY_CREATE" author="sviarkaltsau">
 		<createTable tableName="CATEGORY">
@@ -62,19 +64,20 @@
 
 	<changeSet id="CATEGOTY_UPDATE" author="sviarkaltsau">
 		<modifyDataType tableName="HOTEL" columnName="CATEGORY"
-						newDataType="INT" />
-		<addForeignKeyConstraint constraintName="HOTEL_CATEGORY"
+						newDataType="BIGINT" />
+		<addForeignKeyConstraint constraintName="FK_HOTEL_CATEGORY"
 								 baseTableName="HOTEL" baseColumnNames="CATEGORY" referencedTableName="CATEGORY"
 								 referencedColumnNames="ID" onDelete="SET NULL" />
 		<rollback>
 			<dropForeignKeyConstraint baseTableName="HOTEL"
-									  constraintName="HOTEL_CATEGORY" />
-			<dropIndex tableName="HOTEL" indexName="HOTEL_CATEGORY" />
+									  constraintName="FK_HOTEL_CATEGORY" />
+			<dropIndex tableName="HOTEL" indexName="FK_HOTEL_CATEGORY" />
 			<modifyDataType tableName="HOTEL" columnName="CATEGORY"
 							newDataType="VARCHAR(255)" />
 			<addNotNullConstraint tableName="HOTEL"
 								  columnName="CATEGORY" columnDataType="VARCHAR(255)" />
 		</rollback>
 	</changeSet>
+
 
 </databaseChangeLog>
