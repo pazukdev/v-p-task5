@@ -1,4 +1,4 @@
-package com.pazukdev.db;
+package com.pazukdev.auxiliary_services;
 
 import com.mysql.fabric.jdbc.FabricMySQLDriver;
 //import com.mysql.jdbc.Connection;

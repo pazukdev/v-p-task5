@@ -43,12 +43,14 @@ public abstract class AbstractForm extends VerticalLayout {
 
     protected TextArea description;
 
+    protected PaymentField paymentField;
+
     // Fields for Category class
     protected TextField categoryName;
 
     protected Button updateButton;
     protected Button cancelButton;
-    HorizontalLayout buttonBar;
+    protected HorizontalLayout buttonBar;
 
     protected Binder<Hotel> binder;
     protected Binder<Category> categoryBinder;
@@ -64,6 +66,7 @@ public abstract class AbstractForm extends VerticalLayout {
     protected String categoryIdKey ="Category";
     protected String urlKey = "URL";
     protected String descriptionKey = "Description";
+    protected String paymentKey = "Payment";
 
     protected String categoryNameKey = "Category name";
 
@@ -78,12 +81,9 @@ public abstract class AbstractForm extends VerticalLayout {
         setDescriptions();
         setPlaceholders();
         setButtons();
-        setComponentsSizes();
-
         setTextFieldsList();
-
         buttonBar = new HorizontalLayout(updateButton, cancelButton);
-
+        setComponentsSizes();
         setMargin(false);
     }
 
@@ -96,10 +96,9 @@ public abstract class AbstractForm extends VerticalLayout {
         setDescriptions();
         setPlaceholders();
         setButtons();
-
         buttonBar = new HorizontalLayout(updateButton, cancelButton);
-
         setComponentsSizes();
+        setMargin(false);
     }
 
 
@@ -139,6 +138,7 @@ public abstract class AbstractForm extends VerticalLayout {
             Field categoryId = null;
             Field url = null;
             Field description = null;
+            Field payment = null;
             try {
                 name = c.getDeclaredField("name");
                 address = c.getDeclaredField("address");
@@ -147,6 +147,7 @@ public abstract class AbstractForm extends VerticalLayout {
                 categoryId = c.getDeclaredField("categoryId");
                 url = c.getDeclaredField("url");
                 description = c.getDeclaredField("description");
+                payment = c.getDeclaredField("payment");
             } catch (NoSuchFieldException e) {
                 e.printStackTrace();
             }
@@ -195,13 +196,17 @@ public abstract class AbstractForm extends VerticalLayout {
 
     protected NativeSelect<Category> initCategorySelect() {
         NativeSelect<Category> categorySelect = new NativeSelect<>(categoryIdKey);
+        categorySelect.setId("hotelCategoryNativeSelect");
         categorySelect.setItems(categoryService.findAll());
         return categorySelect;
     }
 
     protected DateField initDateField() {
         DateField operatesFromDay = new DateField(operatesFromDayKey);
+        operatesFromDay.setId("hotelOperatesFromDateField");
+        operatesFromDay.setDateFormat("dd.MM.yyyy");
         operatesFromDay.setRangeEnd(LocalDate.now().minusDays(1L));
+        operatesFromDay.setRangeStart(null);
         return operatesFromDay;
     }
 
@@ -212,12 +217,20 @@ public abstract class AbstractForm extends VerticalLayout {
         operatesFromDay = initDateField();
 
         name = new TextField(nameKey);
+        name.setId("hotelNameTextField");
         address = new TextField(addressKey);
+        address.setId("hotelAddressTextField");
         rating = new TextField(ratingKey);
+        rating.setId("hotelRatingTextField");
         description = new TextArea(descriptionKey);
+        description.setId("hotelDescriptionTextArea");
         url = new TextField(urlKey);
+        url.setId("hotelUrlTextField");
+        paymentField = new PaymentField(paymentKey);
+        paymentField.setId("hotelPaymentCustomField");
 
         categoryName = new TextField(categoryNameKey);
+        categoryName.setId("categoryNameTextField");
     }
 
 
@@ -256,12 +269,14 @@ public abstract class AbstractForm extends VerticalLayout {
     protected void setButtons() {
         // Update button
         updateButton = new Button("Update");
+        updateButton.setId("updateButton");
         updateButton.setEnabled(false);
         updateButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
         updateButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
         // Cancel button
         cancelButton = new Button("Cancel");
+        cancelButton.setId("cancelButton");
         cancelButton.setClickShortcut(ShortcutAction.KeyCode.ESCAPE);
     }
 
@@ -327,7 +342,8 @@ public abstract class AbstractForm extends VerticalLayout {
 
             case "Category":
                 for(Hotel hotel : hotelForm.getSelected()) {
-                    set.add(hotel.getCategoryId().toString());
+                    if(hotel.getCategoryId() != null) set.add(hotel.getCategoryId().toString());
+                    else set.add("No category");
                 }
                 break;
 
@@ -433,6 +449,14 @@ public abstract class AbstractForm extends VerticalLayout {
             binder.forField(description)
                     .withNullRepresentation("")
                     .bind(Hotel::getDescription, Hotel::setDescription);
+        }
+
+        if(fieldKey.equals(paymentKey)) {
+            binder.forField(paymentField)
+                    .asRequired("")
+                    .withValidator(payment -> (payment.getPaymentValue() != null && payment.getPaymentValue() != -1)
+                                    || payment.getPaymentValue() == null, "Wrong input: incorrect payment value")
+                    .bind(Hotel::getPayment, Hotel::setPayment);
         }
 
         if(fieldKey.equals(categoryNameKey)) {

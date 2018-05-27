@@ -1,31 +1,20 @@
 package com.pazukdev.ui;
 
-import com.pazukdev.converters.CategoryToCategoryIDConverter;
-import com.pazukdev.converters.LocalDateToDaysConverter;
-import com.pazukdev.entities.Category;
-import com.pazukdev.entities.Hotel;
-import com.pazukdev.services.CategoryService;
-import com.pazukdev.services.HotelService;
-import com.vaadin.data.Binder;
-import com.vaadin.data.ValidationException;
-import com.vaadin.data.converter.StringToIntegerConverter;
-import com.vaadin.data.validator.RegexpValidator;
-import com.vaadin.event.ShortcutAction;
-import com.vaadin.ui.*;
-import com.vaadin.ui.themes.ValoTheme;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import com.pazukdev.converters.StringToIntegerPaymentConverter;
+import com.pazukdev.entities.Hotel;
+import com.vaadin.ui.*;
 
 
 public class HotelEditForm extends AbstractForm {
 
     FormLayout formLayout = new FormLayout();
 
+
     public HotelEditForm(HotelForm hotelForm) {
         super(hotelForm);
-        formLayout.addComponents(name, address, rating, operatesFromDay, categorySelect, description, url, buttonBar);
+        formLayout.addComponents(name, address, rating, operatesFromDay, categorySelect, description,
+                url, paymentField, buttonBar);
         formLayout.setMargin(false);
         addComponents(formLayout);
         setMargin(false);
@@ -37,6 +26,7 @@ public class HotelEditForm extends AbstractForm {
         categorySelect.setWidth("186px");
         updateButton.setWidth("86px");
         cancelButton.setWidth("86px");
+        description.setHeight("70px");
     }
 
 
@@ -67,6 +57,7 @@ public class HotelEditForm extends AbstractForm {
         setBinderForField(Hotel.class.getName(), operatesFromDayKey, false);
         setBinderForField(Hotel.class.getName(), urlKey, false);
         setBinderForField(Hotel.class.getName(), descriptionKey, false);
+        setBinderForField(Hotel.class.getName(), paymentKey, false);
     }
 
 

@@ -34,6 +34,7 @@ public class CategoryForm extends FormLayout implements View {
         updateCategoryList();
 
         addComponents(categoryToolbar, categoryMainLayout);
+        setSizeFull();
         setMargin(false);
     }
 
@@ -59,11 +60,13 @@ public class CategoryForm extends FormLayout implements View {
 
         // Main layout
         categoryMainLayout = new HorizontalLayout(categoryGrid, categoryEditForm);
+
     }
 
 
     private void setButtons() {
         //Add button
+        addCategory.setId("addCategoryButton");
         addCategory.setStyleName(ValoTheme.BUTTON_FRIENDLY);
         addCategory.addClickListener(event -> {
             categoryGrid.asMultiSelect().clear();
@@ -71,10 +74,12 @@ public class CategoryForm extends FormLayout implements View {
         });
 
         // Delete button
+        deleteCategory.setId("deleteCategoryButton");
         deleteCategory.setEnabled(false);
         deleteCategory.addClickListener(e -> deleteSelected());
 
         // Edit button
+        editCategory.setId("editCategoryButton");
         editCategory.setEnabled(false);
         editCategory.addClickListener(event -> {
             categoryEditForm.editCategory(categoryGrid.getSelectedItems().iterator().next());

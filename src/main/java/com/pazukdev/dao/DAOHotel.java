@@ -56,6 +56,7 @@ public class DAOHotel implements DAOInterface<Hotel> {
 			h.setCategoryId(hotel.getCategoryId());
 			h.setUrl(hotel.getUrl());
 			h.setDescription(hotel.getDescription());
+			h.setPayment(hotel.getPayment());
 			em.getTransaction().commit();
 		} catch (Exception e) {
 			em.getTransaction().rollback();

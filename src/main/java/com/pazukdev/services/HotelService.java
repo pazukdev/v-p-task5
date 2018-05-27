@@ -3,6 +3,7 @@ package com.pazukdev.services;
 import com.pazukdev.dao.DAOHotel;
 import com.pazukdev.entities.Category;
 import com.pazukdev.entities.Hotel;
+import com.pazukdev.entities.Payment;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -136,17 +137,22 @@ public class HotelService {
 					"Phetmeuangsam Hotel;2;https://www.booking.com/hotel/la/phetmisay.en-gb.html;Ban Phanhxai, Xumnuea, Xam Nua, 01000 Xam Nua, Laos" };
 
 			Random random = new Random(0);
-			for (String hotel : hotelData) {
-				String[] split = hotel.split(";");
+			for (String hotelSourseString : hotelData) {
+				String[] splitedString = hotelSourseString.split(";");
 				Hotel h = new Hotel();
-				h.setName(split[0]);
-				h.setRating(Integer.parseInt(split[1]));
-				h.setUrl(split[2]);
-				h.setAddress(split[3]);
+				h.setName(splitedString[0]);
+				h.setRating(Integer.parseInt(splitedString[1]));
+				h.setUrl(splitedString[2]);
+				h.setAddress(splitedString[3]);
 				h.setCategoryId(categoriesList.get(random.nextInt(categoriesList.size())).getId());
 				long daysOld = random.nextInt(365 * 30);
 				h.setOperatesFromDay(LocalDate.now().minusDays(daysOld).toEpochDay());
-				h.setDescription(getHotelDescription());
+                int randomNumber = random.nextInt(3);
+                if (randomNumber>0) h.setDescription(getHotelDescription());
+                randomNumber = random.nextInt(3);
+                Payment payment = new Payment();
+				if (randomNumber>0) payment.setPaymentValue((random.nextInt(10) + 1) * 10);
+				h.setPayment(payment);
 				save(h);
 			}
 		}

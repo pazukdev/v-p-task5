@@ -80,4 +80,16 @@
 	</changeSet>
 
 
+	<changeSet id="ADD_PAYMENT_COLUMN" author="sviarkaltsau">
+		<addColumn tableName="HOTEL">
+			<column name="PAYMENT" type="INT">
+                <constraints nullable="true" />
+            </column>
+		</addColumn>
+		<rollback>
+			<dropColumn tableName="HOTEL" columnName="PAYMENT" />
+		</rollback>
+	</changeSet>
+
+
 </databaseChangeLog>

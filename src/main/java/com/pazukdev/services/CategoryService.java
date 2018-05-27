@@ -91,7 +91,10 @@ public class CategoryService {
     public void ensureTestData() {
         if (findAll().isEmpty()) {
             final String[] categoryData = new String[] {
-                    "Hotel", "Hostel", "GuestHouse", "Apartments"
+                    "Hotel",
+                    "Hostel",
+                    "GuestHouse",
+                    "Apartments"
             };
 
             for (String categoryName : categoryData) {
@@ -101,6 +104,16 @@ public class CategoryService {
                 save(category);
             }
         }
+    }
+
+    List<Category> fetchCategories(String name) {
+        // do ???
+        return null;
+    }
+
+    int getCategoriesCount(String name) {
+        // do ???
+        return 0;
     }
 
 }

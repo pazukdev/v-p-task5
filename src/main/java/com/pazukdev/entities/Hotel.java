@@ -31,6 +31,10 @@ public class Hotel extends AbstractEntity {
 	@Column(name = "DESCRIPTION", columnDefinition = "text")
 	private String description;
 
+    @Embedded
+    @Column(name="PAYMENT")
+    private Payment payment;
+
 
 	@Override
 	public String toString() {
@@ -102,4 +106,30 @@ public class Hotel extends AbstractEntity {
 		this.description=description;
 	}
 
+
+	public Payment getPayment() {
+		return payment;
+	}
+
+	public void setPayment(Payment payment) {
+		this.payment = payment;
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

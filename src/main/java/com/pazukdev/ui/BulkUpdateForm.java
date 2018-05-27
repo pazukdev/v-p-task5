@@ -15,7 +15,6 @@ public class BulkUpdateForm extends AbstractForm {
         selectField();
 
         Label label = new Label(hotelForm.bulkUpdate.getCaption());
-
         addComponents(label, fieldSelect, categorySelect, name, address, rating, url,
                 description, operatesFromDay, buttonBar);
     }

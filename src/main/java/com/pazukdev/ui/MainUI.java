@@ -56,9 +56,9 @@ public class MainUI extends UI {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
 
-                navigator.removeView("Hotel");
-                navigator.addView("Hotel", new HotelForm());
-                navigator.navigateTo("Hotel");
+                navigator.removeView("Hotels");
+                navigator.addView("Hotels", new HotelForm());
+                navigator.navigateTo("Hotels");
 
                 Page.getCurrent().setTitle("Hotels");
 
@@ -72,11 +72,11 @@ public class MainUI extends UI {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
 
-                navigator.removeView("Category");
-                navigator.addView("Category", new CategoryForm());
-                navigator.navigateTo("Category");
+                navigator.removeView("Categories");
+                navigator.addView("Categories", new CategoryForm());
+                navigator.navigateTo("Categories");
 
-                Page.getCurrent().setTitle("Hotel category");
+                Page.getCurrent().setTitle("Categories");
 
                 categoryItem.setEnabled(false);
                 hotelItem.setEnabled(true);
@@ -84,9 +84,9 @@ public class MainUI extends UI {
             }
         };
 
-        hotelItem = menu.addItem("Hotel", VaadinIcons.BUILDING, command1);
+        hotelItem = menu.addItem("Hotels", VaadinIcons.BUILDING, command1);
         hotelItem.setEnabled(false);
-        categoryItem = menu.addItem("Category", VaadinIcons.ACADEMY_CAP, command2);
+        categoryItem = menu.addItem("Categories", VaadinIcons.ACADEMY_CAP, command2);
         menu.setStyleName(ValoTheme.MENUBAR_BORDERLESS);
 
         navigator.addView("Hotels", new HotelForm());

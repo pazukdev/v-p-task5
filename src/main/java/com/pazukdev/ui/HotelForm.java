@@ -5,6 +5,7 @@ import com.pazukdev.entities.Hotel;
 import com.pazukdev.services.CategoryService;
 import com.pazukdev.services.HotelService;
 import com.vaadin.navigator.View;
+import com.vaadin.server.Sizeable;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.*;
@@ -45,18 +46,17 @@ public class HotelForm extends FormLayout implements View {
         setButtons();
         setLayoutsAndForms();
         setComponentsSize();
-
         updateHotelList();
-
         addComponents(hotelToolbar, hotelMainLayout);
+        setSizeFull();
         setMargin(false);
     }
 
 
     private void setGrid() {
         hotelGrid.setSelectionMode(Grid.SelectionMode.MULTI);
-        hotelGrid.setWidth("1000px");
-        hotelGrid.setHeight("486px");
+        hotelGrid.setWidth("926px");
+        hotelGrid.setHeight("526px");
         hotelGrid.setBodyRowHeight(34);
         hotelGrid.getColumn("name").setMaximumWidth(260);
         hotelGrid.sort(hotelGrid.getColumn("name"), SortDirection.ASCENDING);
@@ -94,6 +94,11 @@ public class HotelForm extends FormLayout implements View {
 
         Grid.Column<Hotel, String> descriptionColumn = hotelGrid.addColumn(Hotel::getDescription)
                 .setCaption("Description").setMaximumWidth(260);
+
+        Grid.Column<Hotel, String> paymentColumn = hotelGrid.addColumn(hotel -> {
+            if(hotel.getPayment() != null) return hotel.getPayment().toString();
+            else return "Without prepayment";
+        }).setCaption("Payment").setWidth(190);
 
     }
 
@@ -135,6 +140,7 @@ public class HotelForm extends FormLayout implements View {
 
     private void setButtons() {
         //Add button
+        addHotel.setId("addHotelButton");
         addHotel.setStyleName(ValoTheme.BUTTON_FRIENDLY);
         addHotel.addClickListener(event -> {
             if(hotelEditForm.isVisible()) hotelEditForm.setVisible(false);
@@ -142,20 +148,24 @@ public class HotelForm extends FormLayout implements View {
         });
 
         // Delete button
+        deleteHotel.setId("deleteHotelButton");
         deleteHotel.setEnabled(false);
         deleteHotel.addClickListener(event -> deleteSelected());
 
         // Edit button
+        editHotel.setId("editHotelButton");
         editHotel.setEnabled(false);
         editHotel.addClickListener(event -> hotelEditForm.editHotel(getSelected().get(0)));
 
         // Bulk Update button
+        bulkUpdate.setId("bulkUpdateHotelsButton");
         bulkUpdate.setEnabled(false);
         bulkUpdate.addClickListener(event -> popupView.setPopupVisible(true));
     }
 
     private void setComponentsSize() {
-        String toolBarButtonsSize = "142px";
+        //String toolBarButtonsSize = "142px";
+        String toolBarButtonsSize = "124px";
 
         // Toolbar buttons
         addHotel.setWidth(toolBarButtonsSize);
@@ -184,6 +194,8 @@ public class HotelForm extends FormLayout implements View {
         editHotel.setEnabled(selectedRowsNumber == 1);
         deleteHotel.setEnabled(selectedRowsNumber > 0);
         bulkUpdate.setEnabled(selectedRowsNumber > 1);
+
+        hotelEditForm.setVisible(false);
     }
 
 
