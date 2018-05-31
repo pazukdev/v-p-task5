@@ -9,6 +9,8 @@ Run app, select test browser abd click "Play demo button"
 - Second way: manual run  
 Run TestService class (file is in auxiliary_services folder). Running this way by default runs test in Chrome browser
 
+- To stop demo just close the browser
+
 Important:
 Work in actual versions of Mozilla FireFox and InternetExplorer was not tested
 
