@@ -4,8 +4,8 @@ import com.pazukdev.entities.Category;
 import com.pazukdev.entities.Hotel;
 import com.pazukdev.services.CategoryService;
 import com.pazukdev.services.HotelService;
+import com.pazukdev.services.UIComponentsService;
 import com.vaadin.navigator.View;
-import com.vaadin.server.Sizeable;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.*;
@@ -33,7 +33,7 @@ public class HotelForm extends FormLayout implements View {
     private Button addHotel= new Button("Add hotel");
     private Button deleteHotel = new Button("Delete hotel");
     private Button editHotel = new Button("Edit hotel");
-    Button bulkUpdate = new Button("Bulk Update");
+    public Button bulkUpdate = new Button("Bulk Update");
 
     private HotelEditForm hotelEditForm;
     private PopupView popupView;
@@ -55,7 +55,7 @@ public class HotelForm extends FormLayout implements View {
 
     private void setGrid() {
         hotelGrid.setSelectionMode(Grid.SelectionMode.MULTI);
-        hotelGrid.setWidth("926px");
+        hotelGrid.setWidth(UIComponentsService.hotelGridWidth + "px");
         hotelGrid.setHeight("526px");
         hotelGrid.setBodyRowHeight(34);
         hotelGrid.getColumn("name").setMaximumWidth(260);
@@ -105,11 +105,13 @@ public class HotelForm extends FormLayout implements View {
 
     private void setFilters() {
         // Filter by name
+        filterByName.setId("filterHotelsByNameTextField");
         filterByName.setPlaceholder("Filter by name");
         filterByName.addValueChangeListener(e -> updateHotelList());
         filterByName.setValueChangeMode(ValueChangeMode.LAZY);
 
         // Filter by address
+        filterByAddress.setId("filterHotelsByAddressTextField");
         filterByAddress.setPlaceholder("Filter by address");
         filterByAddress.addValueChangeListener(e -> updateHotelList());
         filterByAddress.setValueChangeMode(ValueChangeMode.LAZY);
@@ -117,7 +119,7 @@ public class HotelForm extends FormLayout implements View {
 
 
     private void setLayoutsAndForms() {
-        // Toolbar
+        // Tool bar
         hotelToolbar = new HorizontalLayout(filterByName, filterByAddress, addHotel,
                 deleteHotel, editHotel, bulkUpdate);
 
@@ -142,6 +144,7 @@ public class HotelForm extends FormLayout implements View {
         //Add button
         addHotel.setId("addHotelButton");
         addHotel.setStyleName(ValoTheme.BUTTON_FRIENDLY);
+        addHotel.setDescription("Create a new hotel");
         addHotel.addClickListener(event -> {
             if(hotelEditForm.isVisible()) hotelEditForm.setVisible(false);
             hotelEditForm.editHotel(new Hotel());
@@ -150,22 +153,25 @@ public class HotelForm extends FormLayout implements View {
         // Delete button
         deleteHotel.setId("deleteHotelButton");
         deleteHotel.setEnabled(false);
+        deleteHotel.setDescription("Delete selected hotels");
         deleteHotel.addClickListener(event -> deleteSelected());
 
         // Edit button
         editHotel.setId("editHotelButton");
         editHotel.setEnabled(false);
+        editHotel.setDescription("Edit selected hotel");
         editHotel.addClickListener(event -> hotelEditForm.editHotel(getSelected().get(0)));
 
         // Bulk Update button
         bulkUpdate.setId("bulkUpdateHotelsButton");
         bulkUpdate.setEnabled(false);
+        bulkUpdate.setDescription("Update parameters of 2 or more selected hotels");
         bulkUpdate.addClickListener(event -> popupView.setPopupVisible(true));
     }
 
     private void setComponentsSize() {
         //String toolBarButtonsSize = "142px";
-        String toolBarButtonsSize = "124px";
+        String toolBarButtonsSize = UIComponentsService.hotelFormButtonsWidth + "px";
 
         // Toolbar buttons
         addHotel.setWidth(toolBarButtonsSize);

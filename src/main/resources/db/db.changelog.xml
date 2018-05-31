@@ -5,7 +5,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-	<changeSet id="init" author="sviarkaltsau">
+	<changeSet id="init" author="melamory">
 		<!-- ================================= Hotels ================================= -->
 		<createTable tableName="HOTEL">
 			<column autoIncrement="true" name="ID" type="BIGINT">

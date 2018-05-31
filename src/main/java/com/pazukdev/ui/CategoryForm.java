@@ -68,6 +68,7 @@ public class CategoryForm extends FormLayout implements View {
         //Add button
         addCategory.setId("addCategoryButton");
         addCategory.setStyleName(ValoTheme.BUTTON_FRIENDLY);
+        addCategory.setDescription("Create a new hotel category");
         addCategory.addClickListener(event -> {
             categoryGrid.asMultiSelect().clear();
             categoryEditForm.editCategory(new Category());
@@ -76,10 +77,12 @@ public class CategoryForm extends FormLayout implements View {
         // Delete button
         deleteCategory.setId("deleteCategoryButton");
         deleteCategory.setEnabled(false);
+        deleteCategory.setDescription("Delete selected hotel categories");
         deleteCategory.addClickListener(e -> deleteSelected());
 
         // Edit button
         editCategory.setId("editCategoryButton");
+        editCategory.setDescription("Edit selected hotel category");
         editCategory.setEnabled(false);
         editCategory.addClickListener(event -> {
             categoryEditForm.editCategory(categoryGrid.getSelectedItems().iterator().next());

@@ -2,7 +2,8 @@ package com.pazukdev.ui;
 
 import javax.servlet.annotation.WebListener;
 import javax.servlet.annotation.WebServlet;
-
+import com.pazukdev.auxiliary_services.DemoService;
+import com.pazukdev.services.UIComponentsService;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -33,25 +34,86 @@ public class MainUI extends UI {
     public static class MyConfiguration {
     }
 
+
+    private Navigator navigator;
+
+    private VerticalLayout layout = new VerticalLayout();
+    private HorizontalLayout menuBar = new HorizontalLayout();
+    private HorizontalLayout buttonBar = new HorizontalLayout();
+    private HorizontalLayout content = new HorizontalLayout();
+
+    private NativeSelect<String> browserSelect = new NativeSelect<>();
+
+    private Button demoPlay = new Button("Play demo");
+    //private Button demoStop = new Button("Stop"); // - is not using at the present time
+
     MenuBar menu = new MenuBar();
     MenuBar.MenuItem hotelItem;
     MenuBar.MenuItem categoryItem;
 
+    DemoService demoService;
+
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-        VerticalLayout layout = new VerticalLayout();
         layout.setSizeFull();
-
-        setContent(layout);
-
-        HorizontalLayout content = new HorizontalLayout();
+        menuBar.setWidth(UIComponentsService.hotelGridWidth + 20 + "px");
         content.setSizeFull();
 
-        layout.addComponents(menu, content);
+        setNativeSelect();
+        setButtons();
+        setMenu();
+
+        buttonBar.addComponents(browserSelect, demoPlay);
+        menuBar.addComponents(menu, buttonBar);
+        menuBar.setComponentAlignment(buttonBar, Alignment.MIDDLE_RIGHT);
+        layout.addComponents(menuBar, content);
         layout.setExpandRatio(content, 1f);
+        setContent(layout);
 
-        final Navigator navigator = new Navigator(this, content);
+        navigator = new Navigator(this, content);
+        navigator.addView("Hotels", new HotelForm());
+        navigator.navigateTo("Hotels");
+    }
 
+
+    private void setNativeSelect() {
+        browserSelect.setItems("Chrome", "FireFox", "IE");
+        browserSelect.setWidth(UIComponentsService.hotelFormButtonsWidth + "px");
+        browserSelect.setDescription("Select browser in what demonstration of website functionality will run."
+                + " The browser should be installed on your machine");
+        browserSelect.addSelectionListener(event -> {
+            demoPlay.setEnabled(true);
+            if(browserSelect.getValue() == null) demoPlay.setEnabled(false);
+        });
+    }
+
+
+    private void setButtons() {
+        String buttonWidth = UIComponentsService.hotelFormButtonsWidth + "px";
+
+        // Demo Play button
+        demoPlay.setId("demoPlayButton");
+        demoPlay.setStyleName(ValoTheme.BUTTON_FRIENDLY);
+        demoPlay.setDescription("Runs demo. Demo runs in a new session of selected browser");
+        demoPlay.addClickListener(event -> {
+            demoService = new DemoService();
+            demoService.runDemo(browserSelect.getValue());
+
+        });
+        demoPlay.setWidth(buttonWidth);
+        demoPlay.setEnabled(false);
+
+        // Demo Stop button - is not using at the present time
+        /*demoStop.setId("demoStopButton");
+        demoStop.setStyleName(ValoTheme.BUTTON_DANGER);
+        demoStop.setDescription("Stops running demo");
+        demoStop.addClickListener(event -> demoService.stopDemo());
+        demoStop.setWidth(buttonWidth);
+        demoStop.setVisible(false);*/
+    }
+
+
+    private void setMenu() {
         MenuBar.Command command1 = new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
@@ -65,6 +127,7 @@ public class MainUI extends UI {
                 hotelItem.setEnabled(false);
                 categoryItem.setEnabled(true);
 
+                buttonBar.setVisible(true);
             }
         };
 
@@ -81,20 +144,23 @@ public class MainUI extends UI {
                 categoryItem.setEnabled(false);
                 hotelItem.setEnabled(true);
 
+                buttonBar.setVisible(false);
             }
         };
 
         hotelItem = menu.addItem("Hotels", VaadinIcons.BUILDING, command1);
+        hotelItem.setDescription("Go to hotels page");
         hotelItem.setEnabled(false);
         categoryItem = menu.addItem("Categories", VaadinIcons.ACADEMY_CAP, command2);
-        menu.setStyleName(ValoTheme.MENUBAR_BORDERLESS);
+        categoryItem.setDescription("Go to hotel categories page");
 
-        navigator.addView("Hotels", new HotelForm());
-        navigator.navigateTo("Hotels");
+        menu.setStyleName(ValoTheme.MENUBAR_BORDERLESS);
     }
+
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = MainUI.class, productionMode = false)
     public static class MyUIServlet extends SpringVaadinServlet {
     }
+
 }
