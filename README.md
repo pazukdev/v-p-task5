@@ -7,7 +7,7 @@ How to run test:
 Run app, select test browser abd click "Play demo button"
 
 - Second way: manual run  
-Run TestService class (file is in auxiliary_services folder). Running this way by default test runs in Chrome
+Run TestService class (file is in auxiliary_services folder). Running this way by default runs test in Chrome browser
 
 Important:
 Work in actual versions of Mozilla FireFox and InternetExplorer was not tested
