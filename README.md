@@ -11,7 +11,7 @@ Run TestService class (file is in auxiliary_services folder). Running this way b
 
 - To stop demo just close the browser
 
-Important:
+Important: 
 Work in actual versions of Mozilla FireFox and InternetExplorer was not tested
 
 
