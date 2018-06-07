@@ -18,7 +18,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 
-public class HotelForm extends FormLayout implements View {
+public class HotelForm extends VerticalLayout implements View {
     private HotelService hotelService = HotelService.getInstance();
     private CategoryService categoryService = CategoryService.getInstance();
 
@@ -48,7 +48,6 @@ public class HotelForm extends FormLayout implements View {
         setComponentsSize();
         updateHotelList();
         addComponents(hotelToolbar, hotelMainLayout);
-        setSizeFull();
         setMargin(false);
     }
 
@@ -56,7 +55,7 @@ public class HotelForm extends FormLayout implements View {
     private void setGrid() {
         hotelGrid.setSelectionMode(Grid.SelectionMode.MULTI);
         hotelGrid.setWidth(UIComponentsService.hotelGridWidth + "px");
-        hotelGrid.setHeight("526px");
+        hotelGrid.setHeight("510px");
         hotelGrid.setBodyRowHeight(34);
         hotelGrid.getColumn("name").setMaximumWidth(260);
         hotelGrid.sort(hotelGrid.getColumn("name"), SortDirection.ASCENDING);
@@ -136,6 +135,7 @@ public class HotelForm extends FormLayout implements View {
 
         // Main layout
         hotelMainLayout = new HorizontalLayout();
+        hotelMainLayout.setSizeFull();
         hotelMainLayout.addComponents(hotelGrid, hotelEditForm, popupView);
     }
 

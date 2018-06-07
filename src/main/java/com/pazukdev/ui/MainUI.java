@@ -37,6 +37,7 @@ public class MainUI extends UI {
 
     private Navigator navigator;
 
+    private Panel panel = new Panel();
     private VerticalLayout layout = new VerticalLayout();
     private HorizontalLayout menuBar = new HorizontalLayout();
     private HorizontalLayout buttonBar = new HorizontalLayout();
@@ -55,9 +56,8 @@ public class MainUI extends UI {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-        layout.setSizeFull();
-        menuBar.setWidth(UIComponentsService.hotelGridWidth + 20 + "px");
-        content.setSizeFull();
+        menuBar.setWidth(UIComponentsService.hotelGridWidth + "px");
+        panel.setSizeFull();
 
         setNativeSelect();
         setButtons();
@@ -67,8 +67,8 @@ public class MainUI extends UI {
         menuBar.addComponents(menu, buttonBar);
         menuBar.setComponentAlignment(buttonBar, Alignment.MIDDLE_RIGHT);
         layout.addComponents(menuBar, content);
-        layout.setExpandRatio(content, 1f);
-        setContent(layout);
+        panel.setContent(layout);
+        setContent(panel);
 
         navigator = new Navigator(this, content);
         navigator.addView("Hotels", new HotelForm());
@@ -77,7 +77,7 @@ public class MainUI extends UI {
 
 
     private void setNativeSelect() {
-        browserSelect.setItems("Chrome", "FireFox", "IE");
+        browserSelect.setItems("Chrome", "FireFox", "IE", "local");
         browserSelect.setWidth(UIComponentsService.hotelFormButtonsWidth + "px");
         browserSelect.setDescription("Select browser in what demonstration of website functionality will run."
                 + " The browser should be installed on your machine");

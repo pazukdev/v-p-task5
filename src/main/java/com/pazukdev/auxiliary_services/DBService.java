@@ -27,7 +27,7 @@ public class DBService {
 
     static Connection connection;
 
-    static final String URL="jdbc:mysql://localhost:3306/demo_hotels?useSSL=true&amp;autoReconnect=true&amp;serverTimezone=UTC";
+    static final String URL="jdbc:mysql://localhost:3306/demo_hotels?autoReconnect=true&amp;serverTimezone=UTC";
     static final String USERNAME="demo";
     static final String PASSWORD="D1e2m3o4O1E3AE!3";
 

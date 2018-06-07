@@ -26,7 +26,7 @@ public class HotelEditForm extends AbstractForm {
         categorySelect.setWidth("186px");
         updateButton.setWidth("86px");
         cancelButton.setWidth("86px");
-        description.setHeight("70px");
+        description.setHeight("80px");
     }
 
 
